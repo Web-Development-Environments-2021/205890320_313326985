@@ -1,47 +1,847 @@
-var context;
-var shape = new Object();
-var board;
-var score;
-var pac_color;
-var start_time;
-var time_elapsed;
-var interval;
 
-$(document).ready(function() {
-	context = canvas.getContext("2d");
-	Start();
+//Shahar//
+
+//dictionary for all the users in the system
+var users = {}
+var foodAmount;
+var fivePoints;
+var fifteenPoints;
+var twentyfivePoints;
+var gameDuration;
+var monsterQuantity;
+var upButton = 38;
+var downButton = 40;
+var rightButton = 37;
+var leftButton = 39;
+var showUp = 'ArrowUp';
+var showDown = 'ArrowDown';
+var showRight = 'ArrowRight';
+var showLeft = 'ArrowLeft';
+var loginUser;
+var context;
+
+
+$(document).ready( function () {
+	//deafult user - username = k, password = k
+	users['k'] = 'k'
+
+
+	//Register validation
+    $( "#signupForm" ).validate( {
+        rules: {
+			username: {
+                required: true,
+				freeUser: true,
+            },
+            fullname: {
+               required: true,
+               noDigits: true,
+            } ,
+            dateofbirth: {
+                required: true,
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            password: {
+                required: true,
+                minlength: 6,
+                validPassword: true
+            },
+            confirm_password: {
+                required: true,
+                minlength: 6,
+                equalTo: "#password"
+            },
+
+        },
+        messages: {
+			username: {
+                required: "Please enter a username",
+				freeUser: "This username already taken"
+            },
+            fullname: {
+                required: "Please enter your full name",
+                noDigits: "Your full name cannot include digits"
+            },
+            dateofbirth: {
+                required: "Please enter your date of birth",
+            },
+            email: {
+                required: "Please enter your email",
+                email: "Please enter a valid email"
+            },
+            password: {
+                required: "Please provide a password",
+                minlength: "Your password must be at least 6 characters long",
+                validPassword: "Your password must contain one digit and one letter"
+            },
+            confirm_password: {
+                required: "Please provide a password",
+				minlength: "Your password must be at least 6 characters long",
+                equalTo: "Please enter the same password as above"
+            },
+
+        },
+
+        submitHandler: function() {
+            //get elements
+			let username = document.getElementById("username").value;
+			let password = document.getElementById("password").value;
+
+			//insert to storage
+			users[username] = password
+
+			showWelcome();
+			alert('You have successfully registered!');
+
+            //reset details
+            let form = $("#signupForm");
+            form[0].reset();
+
+        },
+    });
+
+
+	//Login validation
+	$( "#loginForm" ).validate( {
+        rules: {
+			loginuser: {
+                required: true,
+				userExist: true,
+            },
+            loginpassword: {
+               required: true,
+			   confirmPassword: true,
+            } ,
+        },
+        messages: {
+			loginuser: {
+                required: "Please enter a username",
+				userExist: "The username is not valid"
+            },
+            loginpassword: {
+                required: "Please provide a password",
+                confirmPassword: "The password is not valid"
+            },
+        },
+
+        submitHandler: function() {
+			loginUser = document.getElementById("loginuser").value;
+			document.getElementById("showuser").innerHTML = loginUser;
+			document.getElementById("login").style.display = 'none';
+			document.getElementById("signup").style.display = 'none';
+			document.getElementById("logout").style.display = 'block';
+			document.getElementById("settings").style.display = 'block';
+			resetSettings();
+			showSettings();
+            //reset details
+            let form = $("#loginForm");
+            form[0].reset();
+
+        },
+    });
+
+
+	//Settings validation
+	$( "#settingsForm" ).validate( {
+		rules: {
+			up: {
+				checkUpKey: true,
+			} ,
+			down: {
+				checkDownKey: true,
+			} ,
+			right: {
+				checkRightKey: true,
+			} ,
+			left: {
+				checkLeftKey: true,
+			} ,
+		},
+		messages: {
+			up: {
+				checkUpKey: "This button already taken by another action",
+			},
+			down: {
+				checkDownKey: "This button already taken by another action",
+			},
+			right: {
+				checkRightKey: "This button already taken by another action",
+			},
+			left: {
+				checkLeftKey: "This button already taken by another action",
+
+			},
+
+		},
+	
+		submitHandler: function() {
+			document.getElementById("gameMenu").style.display = 'block';
+			showGame();
+			context = canvas.getContext("2d");
+			Start();
+			
+		},
+	});
+
 });
 
+
+$(function() {
+	//Password must contain at least one digit and one letter
+	$.validator.addMethod('validPassword', function (value, element) {
+		return this.optional(element) ||
+			/\d/.test(value) &&
+			/[a-z]/i.test(value);
+	});
+
+	//Full name can't contain digits
+	$.validator.addMethod('noDigits', function (value, element) {
+		return this.optional(element) || !/[0-9]/i.test(value);
+	});
+
+	//Taken username
+	$.validator.addMethod('freeUser', function (value, element) {
+		if(value in users){
+			return false;
+		}
+		else{
+			return true;
+		}
+	});
+
+	//user in the system
+	$.validator.addMethod('userExist', function (value, element) {
+		if(value in users){
+			return true;
+		}
+		else{
+			return false;
+		}
+	});
+
+	//Check if this is the password of the user
+	$.validator.addMethod('confirmPassword', function (value, element) {
+		let user_name = document.getElementById("loginuser").value;
+		let user_password = users[user_name]
+
+		if(value == user_password){
+			return true;
+		}
+		else{
+			return false;
+		}
+	});
+
+	//check if the key actions not equal
+	$.validator.addMethod("checkUpKey", function(value, element) {
+		let upCheck = document.getElementById("up").value;
+		let downCheck = document.getElementById("down").value;
+		let rightCheck = document.getElementById("right").value;
+		let leftCheck = document.getElementById("left").value;
+
+		if(upCheck == downCheck || upCheck == rightCheck || upCheck == leftCheck){
+			return false;
+		}
+
+		else{
+			return true;
+		}
+
+	});
+
+	$.validator.addMethod("checkDownKey", function(value, element) {
+		let upCheck = document.getElementById("up").value;
+		let downCheck = document.getElementById("down").value;
+		let rightCheck = document.getElementById("right").value;
+		let leftCheck = document.getElementById("left").value;
+
+		if(upCheck == downCheck || downCheck == rightCheck || downCheck == leftCheck){
+			return false;
+		}
+
+		else{
+			return true;
+		}
+
+	});
+
+	$.validator.addMethod("checkLeftKey", function(value, element) {
+		let upCheck = document.getElementById("up").value;
+		let downCheck = document.getElementById("down").value;
+		let rightCheck = document.getElementById("right").value;
+		let leftCheck = document.getElementById("left").value;
+
+		if(upCheck == leftCheck || leftCheck == rightCheck || downCheck == leftCheck){
+			return false;
+		}
+
+		else{
+			return true;
+		}
+
+	});
+
+	$.validator.addMethod("checkRightKey", function(value, element) {
+		let upCheck = document.getElementById("up").value;
+		let downCheck = document.getElementById("down").value;
+		let rightCheck = document.getElementById("right").value;
+		let leftCheck = document.getElementById("left").value;
+
+		if(upCheck == rightCheck || downCheck == rightCheck || rightCheck == leftCheck){
+			return false;
+		}
+
+		else{
+			return true;
+		}
+
+	});
+
+});
+
+
+function showPassword() {
+	var x = document.getElementById("loginpassword");
+	if (x.type === "password") {
+	  x.type = "text";
+	} else {
+	  x.type = "password";
+	}
+  }
+
+function updateballsNumber(){
+	var slider = document.getElementById("rangeballs");
+	var output = document.getElementById("ballsvalue");
+	output.innerHTML = slider.value;
+	foodAmount = parseInt(document.getElementById("rangeballs").value);
+}
+
+function updateDuration(){
+	var slider = document.getElementById("rangeduration");
+	var output = document.getElementById("durationvalue");
+	output.innerHTML = slider.value;
+	gameDuration = parseInt(document.getElementById("rangeduration").value);
+
+}
+
+function updateColors(color){
+	if(color == '5point'){
+		fivePoints = document.getElementById("15point").value;
+	}
+	else if(color == '15pount'){
+		fifteenPoints = document.getElementById("25point").value;
+	}
+	else if( color == '25point'){
+		twentyfivePoints =  document.getElementById("25point").value;	
+	}
+
+}
+
+function updateMonsters(){
+	monsterQuantity = parseInt(document.getElementById("monsterquantity").value);
+}
+
+
+function updateButton(event, direction){
+	var keyName = event.key;
+	var key = event.keyCode;
+	//up
+	if(direction == 'up'){
+		document.getElementById("up").value = keyName;
+		showUp = keyName;
+		upButton = key;
+	}
+	else if(direction == 'down'){
+		document.getElementById("down").value = keyName;
+		showDown = keyName;
+		downButton = key;
+	}	
+	else if(direction == 'right'){
+		document.getElementById("right").value = keyName;
+		showRight = keyName;
+		rightButton = key;
+	}
+	else if(direction == 'left'){
+		document.getElementById("left").value = keyName;
+		showLeft = keyName;
+		leftButton = key;
+	}
+
+}
+
+function randomSettings(){
+	//random keys action
+	upButton = 38;
+	downButton = 40;
+	rightButton = 39;
+	leftButton = 37;
+	showUp = 'ArrowUp';
+ 	showDown = 'ArrowDown';
+ 	showRight = 'ArrowRight';
+ 	showLeft = 'ArrowLeft';
+	document.getElementById("up").value = 'ArrowUp';
+	document.getElementById("down").value = 'ArrowDown';
+	document.getElementById("right").value = 'ArrowRight';
+	document.getElementById("left").value = 'ArrowLeft';
+
+	//random food amount
+	document.getElementById("rangeballs").value = Math.floor(Math.random() * (41) + 50);
+	document.getElementById("ballsvalue").innerHTML = document.getElementById("rangeballs").value;
+	foodAmount = parseInt(document.getElementById("rangeballs").value);
+
+	//random colors
+	document.getElementById("5point").value = "#" + Math.floor(Math.random()*16777215).toString(16);
+	document.getElementById("15point").value = "#" + Math.floor(Math.random()*16777215).toString(16);
+	document.getElementById("25point").value = "#" + Math.floor(Math.random()*16777215).toString(16);
+
+	fivePoints = document.getElementById("5point").value;
+	fifteenPoints = document.getElementById("15point").value;
+	twentyfivePoints =  document.getElementById("25point").value;
+
+	//random duration
+	document.getElementById("rangeduration").value = Math.floor(Math.random() * (61) + 60);
+	document.getElementById("durationvalue").innerHTML = document.getElementById("rangeduration").value;
+	gameDuration = parseInt(document.getElementById("rangeduration").value);
+
+	//random monsters
+	document.getElementById("monsterquantity").value = Math.floor(Math.random() * (4) + 1);
+	monsterQuantity = parseInt(document.getElementById("monsterquantity").value);
+}
+
+function resetSettings(){
+
+	document.getElementById("settingsForm").reset();
+	//defult keys action
+	upButton = 38;
+	downButton = 40;
+	rightButton = 39;
+	leftButton = 37;
+	showUp = 'ArrowUp';
+	showDown = 'ArrowDown';
+	showRight = 'ArrowRight';
+	showLeft = 'ArrowLeft';
+	document.getElementById("up").value = 'ArrowUp';
+	document.getElementById("down").value = 'ArrowDown';
+	document.getElementById("right").value = 'ArrowRight';
+	document.getElementById("left").value = 'ArrowLeft';
+
+	//deafult food amount
+	document.getElementById("rangeballs").value = 50;
+	document.getElementById("ballsvalue").innerHTML = 50;
+	foodAmount = parseInt(document.getElementById("rangeballs").value);
+	
+	//deafult colors
+	document.getElementById("5point").value = "#ccffeb";
+	document.getElementById("15point").value = "#ccccff";
+	document.getElementById("25point").value = "#ffc299";
+
+	fivePoints = document.getElementById("5point").value;
+	fifteenPoints = document.getElementById("15point").value;
+	twentyfivePoints =  document.getElementById("25point").value;
+	
+	//deafult duration
+	document.getElementById("rangeduration").value = 60;
+	document.getElementById("durationvalue").innerHTML = 60;
+	gameDuration = parseInt(document.getElementById("rangeduration").value);
+	
+	//deafult monsters
+	document.getElementById("monsterquantity").value = 1;
+	monsterQuantity = parseInt(document.getElementById("monsterquantity").value);
+
+
+}
+
+
+
+function showWelcome() { 
+    document.getElementById("Game").style.display="none"; 
+    document.getElementById("Login").style.display="none"; 
+	document.getElementById("Register").style.display="none"; 
+	document.getElementById("Settings").style.display="none"; 
+	document.getElementById("About").style.display="none"; 
+	document.getElementById("Welcome").style.display="block";
+}
+
+function showLogin(){
+	document.getElementById("Game").style.display="none"; 
+	document.getElementById("Login").style.display="block"; 
+	document.getElementById("Register").style.display="none"; 
+	document.getElementById("Settings").style.display="none"; 
+	document.getElementById("Welcome").style.display="none"; 
+	document.getElementById("About").style.display="none"; 
+}
+
+function showRegister(){
+	document.getElementById("Game").style.display="none"; 
+	document.getElementById("Login").style.display="none"; 
+	document.getElementById("Register").style.display="block"; 
+	document.getElementById("Settings").style.display="none"; 
+	document.getElementById("Welcome").style.display="none";
+	document.getElementById("About").style.display="none";  
+}
+
+function showGame(){
+	document.getElementById("Game").style.display="block"; 
+	initIntervals();
+	document.getElementById("Login").style.display="none"; 
+	document.getElementById("Register").style.display="none"; 
+	document.getElementById("Settings").style.display="none"; 
+	document.getElementById("Welcome").style.display="none"; 
+	document.getElementById("About").style.display="none"; 
+}
+
+function showAbout(){
+	document.getElementById("Game").style.display="none"; 
+	document.getElementById("Login").style.display="none"; 
+	document.getElementById("Register").style.display="none"; 
+	document.getElementById("Settings").style.display="none"; 
+	document.getElementById("Welcome").style.display="none"; 
+	document.getElementById("About").style.display="block"; 
+}
+
+function showSettings(){
+	document.getElementById("Game").style.display="none"; 
+	document.getElementById("Login").style.display="none"; 
+	document.getElementById("Register").style.display="none"; 
+	document.getElementById("Settings").style.display="block"; 
+	document.getElementById("Welcome").style.display="none"; 
+	document.getElementById("About").style.display="none"; 
+}
+
+function logOut(){
+	loginUser;
+	document.getElementById("showuser").innerHTML = 'guest';
+	document.getElementById("logout").style.display = 'none';
+	document.getElementById("gameMenu").style.display = 'none';
+	document.getElementById("settings").style.display = 'none';
+	document.getElementById("login").style.display = 'block';
+	document.getElementById("signup").style.display = 'block';
+	resetSettings();
+	showWelcome();
+	loginUser = none;
+	//reset game
+}
+
+
+
+
+
+//Shahar//
+
+
+
+
+
+////About/////
+
+function showAbout(){
+	// Get the modal
+	var modal = document.getElementById("About");
+	modal.style.display = "block";
+	
+	// Get the <span> element that closes the modal
+	var span = document.getElementsByClassName("close")[0];
+	
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+	  modal.style.display = "none";
+	}
+	// When the user clicks on ESC button, close the modal
+	$(document).on(
+	  'keydown', function(event) {
+		if (event.key == "Escape") {
+		  modal.style.display = "none";
+		}
+	});
+	
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+	  if (event.target == modal) {
+		modal.style.display = "none";
+	  }
+	}
+}
+
+////About/////
+
+
+////GAME/////
+
+// pacman's indexes and properties
+var shape = new Object();
+var pac_color;
+// special point's & chillPill & slowPill indexes
+var specialPoint = new Object();
+var chillPill = new Object();
+var slowPill = new Object();
+// each board, for each character
+// that can "run over" the other char
+// board properties
+var board;
+var boardlength;
+var centerBoard;
+var ghostBoard;
+var specialPointBoard;
+var interval;
+var heightOfIndex;
+var widthOfIndex;
+// game properties
+var score;
+var start_time;
+var time_elapsed;
+var amountLifeLeft;
+var amountOfBallsLeft;
+var timeOfGame;
+var food_remain;
+var amountOfFood;
+var flagContinueToResetPacman = false;
+var color_5Pts;
+var color_15Pts;
+var color_25Pts;
+// Define global args for pacman draw
+// So will not reset after every keydown and keep the draw
+var startAngle = 0.15 * Math.PI;
+var finishAngle = 1.85 * Math.PI;
+var flag_clockwise =false;
+var eye_x = 5;
+var eye_y = -15;
+
+// ghost's properties
+var arrOfPosToResetGhosts = new Array();
+var ghostAmount;
+var ghostsCanAttack = true;
+var ghostsSlowDown = false;
+
+
+boardlength = 20;
+// timeOfGame = gameDuration;
+// // timeOfGame = 60;
+// ghostAmount = monsterQuantity;
+// // ghostAmount = 4;
+// amountOfFood =  foodAmount;
+// amountOfFood = 50;
+// color_5Pts = fivePoints;
+// color_15Pts = fifteenPoints;
+// color_25Pts = twentyfivePoints;
+//color_5Pts = "#ccffeb";
+//color_15Pts = "#ccccff";
+//color_25Pts = "#ffc299";
+
 function Start() {
+
+	/* 
+	board[i][j] : 9 -> slowPill - static pill
+	board[i][j] : 8 -> chillPill - static pill
+	board[i][j] : 7 -> special point
+	board[i][j] : 6 -> ghosts
+	board[i][j] : 5 -> obstacle
+	board[i][j] : 4 -> pacman
+	board[i][j] : 3 -> 25 points
+	board[i][j] : 2 -> 15 points
+	board[i][j] : 1 -> 5 points
+	board[i][j] : 0 -> empty cell
+	*/
+
 	board = new Array();
+	ghostBoard = new Array();
+	specialPointBoard = new Array();
+	// variables from Settings
+	timeOfGame = gameDuration;
+	ghostAmount = monsterQuantity;
+	amountOfFood =  foodAmount;
+	color_5Pts = fivePoints;
+	color_15Pts = fifteenPoints;
+	color_25Pts = twentyfivePoints;
+
+	// cell inside board
+	heightOfIndex = canvas.height / boardlength;
+    widthOfIndex =  canvas.width / boardlength;
+	// Length of board
+	centerBoard = parseInt((boardlength-1) / 2,10);
 	score = 0;
+	amountLifeLeft = 5;
+	food_remain = amountOfFood;
+	amountOfBallsLeft = amountOfFood;
+	// Amount of different balls of points
+	var amount5Pts = 0.6 * food_remain;
+	var amount25Pts = 0.1 * food_remain;
 	pac_color = "yellow";
-	var cnt = 100;
-	var food_remain = 50;
+	var cnt = boardlength*boardlength;
 	var pacman_remain = 1;
 	start_time = new Date();
-	for (var i = 0; i < 10; i++) {
+	// define array that helps rearrange ghosts when they eat pacman
+	var pos_1 = new Object();
+	pos_1.i = 0;
+	pos_1.j = 0;
+	var pos_2 = new Object();
+	pos_2.i = 0;
+	pos_2.j = boardlength-1;
+	var pos_3 = new Object();
+	pos_3.i = boardlength-1;
+	pos_3.j = 0;
+	var pos_4 = new Object();
+	pos_4.i = boardlength-1;
+	pos_4.j = boardlength-1;
+	arrOfPosToResetGhosts.push(pos_1,pos_2,pos_3,pos_4);
+
+	//////////////////////// init ghosts
+	ghosts = new Array(ghostAmount);
+	var flag_0_0 = false;
+	var flag_0_9 = false;
+	var flag_9_0 = false;
+	var flag_9_9 = false;
+	// define ghosts by amount, and by corners of canvas
+	if(ghostAmount == 1){
+		flag_0_0 = true;
+	}
+	else if(ghostAmount == 2){
+		flag_0_0 = true;
+		flag_0_9 = true;
+	}
+	else if(ghostAmount == 3){
+		flag_0_0 = true;
+		flag_0_9 = true;
+		flag_9_0 = true;
+	}
+	else if(ghostAmount == 4){
+		flag_0_0 = true;
+		flag_0_9 = true;
+		flag_9_0 = true;
+		flag_9_9 = true;
+	}
+	
+	///////////////// init board
+	for (var i = 0; i < boardlength; i++) {
 		board[i] = new Array();
+		ghostBoard[i] = new Array();
+		specialPointBoard[i] = new Array();
 		//put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
-		for (var j = 0; j < 10; j++) {
+		for (var j = 0; j < boardlength; j++) {
+			// ghosts
+			if(i==0 && j==0 && flag_0_0){
+				ghosts[0] = new Object();
+				ghosts[0].i = 0;
+				ghosts[0].j = 0;
+				ghosts[0].img = new Image();
+				ghosts[0].img.src = "./images/blue_ghost.png";
+				ghostBoard[i][j] = 6;
+			}
+			if(i==0 && j==boardlength-1 && flag_0_9){
+				ghosts[1] = new Object();
+				ghosts[1].i = 0;
+				ghosts[1].j = boardlength-1;
+				ghosts[1].img = new Image();
+				ghosts[1].img.src = "./images/red_ghost.png";
+				ghostBoard[i][j] = 6;
+
+			}
+			if(i==boardlength-1 && j==0 && flag_9_0){
+				ghosts[2] = new Object();
+				ghosts[2].i = boardlength-1;
+				ghosts[2].j = 0;
+				ghosts[2].img = new Image();
+				ghosts[2].img.src = "./images/black_ghost.png";
+				ghostBoard[i][j] = 6;
+
+			}
+			if(i==boardlength-1 && j==boardlength-1 && flag_9_9){
+				ghosts[3] = new Object();
+				ghosts[3].i = boardlength-1;
+				ghosts[3].j = boardlength-1;
+				ghosts[3].img = new Image();
+				ghosts[3].img.src = "./images/orange_ghost.png";
+				ghostBoard[i][j] = 6;
+			}
 			if (
+				//wall 1
 				(i == 3 && j == 3) ||
 				(i == 3 && j == 4) ||
 				(i == 3 && j == 5) ||
+				//wall 2
 				(i == 6 && j == 1) ||
-				(i == 6 && j == 2)
+				(i == 6 && j == 2) ||
+				(i == 6 && j == 3) ||
+				(i == 6 && j == 4) ||
+				(i == 6 && j == 5) ||
+				//wall 3
+				(i == 3 && j == 7) ||
+				(i == 4 && j == 7) ||
+				(i == 5 && j == 7) ||
+				(i == 6 && j == 7) ||
+				(i == 7 && j == 7) ||
+				//wall 4
+				(i == 9 && j == 3) ||
+				(i == 9 && j == 4) ||
+				(i == 9 && j == 5) ||
+				(i == 9 && j == 6) ||
+				//wall 5
+				(i == 7 && j == 12) ||
+				(i == 8 && j == 12) ||
+				(i == 9 && j == 12) ||
+				(i == 10 && j == 12) ||
+				//wall 6
+				(i == 4 && j == 12) ||
+				(i == 4 && j == 13) ||
+				(i == 4 && j == 14) ||
+				(i == 4 && j == 15) ||
+				//wall 7
+				(i == 11 && j == 13) ||
+				(i == 11 && j == 14) ||
+				(i == 11 && j == 15) ||
+				(i == 11 && j == 16) ||
+				//wall 8
+				(i == 17 && j == 3) ||
+				(i == 17 && j == 4) ||
+				(i == 17 && j == 5) ||
+				(i == 17 && j == 6) ||
+				//wall 9
+				(i == 7 && j == 1) ||
+				(i == 8 && j == 1) ||
+				(i == 9 && j == 1) ||
+				(i == 10 && j == 1) ||
+				//wall 10
+				(i == 15 && j == 15) ||
+				(i == 15 && j == 16) ||
+				(i == 15 && j == 17) ||
+				(i == 15 && j == 18) 
 			) {
-				board[i][j] = 4;
-			} else {
+				// obstacles
+				board[i][j] = 5;
+			}
+			else {
+				// define randomly food places
 				var randomNum = Math.random();
 				if (randomNum <= (1.0 * food_remain) / cnt) {
-					food_remain--;
-					board[i][j] = 1;
-				} else if (randomNum < (1.0 * (pacman_remain + food_remain)) / cnt) {
+					if (amountOfFood-food_remain < amount5Pts){
+						board[i][j] = 1;
+						food_remain--;
+					}
+					else if (food_remain > amount25Pts){
+						board[i][j] = 2;
+						food_remain--;
+					}
+					else if (food_remain >= 0){
+						board[i][j] = 3;
+						food_remain--;
+					}
+				// pacman cannot start at the corners
+				// pacman cannot start at the center of the board
+				} else if (
+					randomNum < (1.0 * (pacman_remain + food_remain)) / cnt && 
+					!(i == 0 && j == 0) &&
+					!(i == 0 && j == boardlength-1) &&
+					!(i == boardlength-1 && j == 0) &&
+					!(i == boardlength-1 && j == boardlength-1) &&
+					!(i == centerBoard && j == centerBoard)
+				)
+				{
 					shape.i = i;
 					shape.j = j;
 					pacman_remain--;
-					board[i][j] = 2;
+					board[i][j] = 4;
 				} else {
 					board[i][j] = 0;
 				}
@@ -49,12 +849,52 @@ function Start() {
 			}
 		}
 	}
-	while (food_remain > 0) {
+	while(food_remain > 0){
 		var emptyCell = findRandomEmptyCell(board);
-		board[emptyCell[0]][emptyCell[1]] = 1;
+		board[emptyCell[0]][emptyCell[1]] = 3;
 		food_remain--;
 	}
+	
+	// create special point
+	// define special point at the center of the board
+	// to find the center of board, parse int of the half of board length of row
+	specialPoint.i = centerBoard;
+	specialPoint.j = specialPoint.i;
+	specialPoint.img = new Image();
+	specialPoint.img.src = "./images/specialPoint.jpg"
+	specialPointBoard[specialPoint.i][specialPoint.j] = 7;
+
+	// create chillPill point
+	// random point on board
+	var emptyCell = findRandomEmptyCell(board);
+	chillPill.i = emptyCell[0];
+	chillPill.j = emptyCell[1];
+	chillPill.img = new Image();
+	chillPill.img.src = "./images/chill_pill.jpg"
+	board[emptyCell[0]][emptyCell[1]] = 8;
+
+	// create slowPill point
+	// random point on board
+	var emptyCell = findRandomEmptyCell(board);
+	slowPill.i = emptyCell[0];
+	slowPill.j = emptyCell[1];
+	slowPill.img = new Image();
+	slowPill.img.src = "./images/slow_ghost.png"
+	board[emptyCell[0]][emptyCell[1]] = 9;
+
+
 	keysDown = {};
+
+	/* Disable scrolling page with arrows */ 
+	addEventListener(
+		"keydown",
+		function(e) {
+		if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+			e.preventDefault();
+		}
+		},
+	 	false
+	);
 	addEventListener(
 		"keydown",
 		function(e) {
@@ -69,30 +909,40 @@ function Start() {
 		},
 		false
 	);
-	interval = setInterval(UpdatePosition, 250);
+	
+}
+
+function initIntervals(){
+	interval = setInterval(UpdatePosition, 180);
+	interval_specialPoint = setInterval(UpdateSpecialPoint, 300);
+	interval_ghosts = setInterval(UpdateGhosts, 550);
 }
 
 function findRandomEmptyCell(board) {
-	var i = Math.floor(Math.random() * 9 + 1);
-	var j = Math.floor(Math.random() * 9 + 1);
+	var i = Math.floor(Math.random() * (boardlength-1) + 1);
+	var j = Math.floor(Math.random() * (boardlength-1) + 1);
 	while (board[i][j] != 0) {
-		i = Math.floor(Math.random() * 9 + 1);
-		j = Math.floor(Math.random() * 9 + 1);
+		i = Math.floor(Math.random() * (boardlength-1) + 1);
+		j = Math.floor(Math.random() * (boardlength-1) + 1);
 	}
 	return [i, j];
 }
 
 function GetKeyPressed() {
-	if (keysDown[38]) {
+	// up
+	if (keysDown[upButton]) {
 		return 1;
 	}
-	if (keysDown[40]) {
+	// down
+	if (keysDown[downButton]) {
 		return 2;
 	}
-	if (keysDown[37]) {
+	// left
+	if (keysDown[leftButton]) {
 		return 3;
 	}
-	if (keysDown[39]) {
+	// right
+	if (keysDown[rightButton]) {
 		return 4;
 	}
 }
@@ -101,72 +951,441 @@ function Draw() {
 	canvas.width = canvas.width; //clean board
 	lblScore.value = score;
 	lblTime.value = time_elapsed;
-	for (var i = 0; i < 10; i++) {
-		for (var j = 0; j < 10; j++) {
+	var counterForGhostToDraw = 0
+	for (var i = 0; i < boardlength; i++) {
+		for (var j = 0; j < boardlength; j++) {
 			var center = new Object();
 			center.x = i * 60 + 30;
 			center.y = j * 60 + 30;
-			if (board[i][j] == 2) {
+			// pacman
+			if (board[i][j] == 4) {
 				context.beginPath();
-				context.arc(center.x, center.y, 30, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
+				context.arc(center.x, center.y, 30, startAngle, finishAngle,flag_clockwise); // half circle
 				context.lineTo(center.x, center.y);
 				context.fillStyle = pac_color; //color
 				context.fill();
 				context.beginPath();
-				context.arc(center.x + 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
+				context.arc(center.x + eye_x, center.y + eye_y , 5, 0, 2 * Math.PI); // circle
 				context.fillStyle = "black"; //color
 				context.fill();
+			// food (5 points)
 			} else if (board[i][j] == 1) {
 				context.beginPath();
+				context.arc(center.x, center.y, 10, 0, 2 * Math.PI); // circle
+				context.fillStyle = color_5Pts; //color
+				context.fill();	
+			// food (15 points)
+			}  else if (board[i][j] == 2) {
+				context.beginPath();
 				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
-				context.fillStyle = "black"; //color
-				context.fill();
-			} else if (board[i][j] == 4) {
+				context.fillStyle = color_15Pts; //color
+				context.fill();	
+			// food (25 points)	
+			} else if (board[i][j] == 3) {
+				context.beginPath();
+				context.arc(center.x, center.y, 20, 0, 2 * Math.PI); // circle
+				context.fillStyle = color_25Pts; //color
+				context.fill();	
+			} 
+			else if (board[i][j] == 8) {
+				// draw image of chillPill
+				context.drawImage(chillPill.img, i*heightOfIndex, j*widthOfIndex, 60, 60 * chillPill.img.height / chillPill.img.width)
+			}
+			else if (board[i][j] == 9) {
+				// draw image of slowPill
+				context.drawImage(slowPill.img, i*heightOfIndex, j*widthOfIndex, 60, 60 * slowPill.img.height / slowPill.img.width)
+			}
+			// obstacles
+			else if (board[i][j] == 5) {
 				context.beginPath();
 				context.rect(center.x - 30, center.y - 30, 60, 60);
 				context.fillStyle = "grey"; //color
 				context.fill();
 			}
+			// food (special points)
+			if(specialPointBoard[i][j] == 7){
+				// draw image of special point
+				context.drawImage(specialPoint.img, i*heightOfIndex, j*widthOfIndex, 60, 60 * specialPoint.img.height / specialPoint.img.width)
+			}
+			// ghosts
+			if (ghostBoard[i][j] == 6) {
+				// draw image of ghost
+				context.drawImage(ghosts[counterForGhostToDraw].img, i*heightOfIndex, j*widthOfIndex, 50, 50 * ghosts[counterForGhostToDraw].img.height / ghosts[counterForGhostToDraw].img.width)
+				counterForGhostToDraw++;
+			}
 		}
+	}
+}
+
+function UpdateGhosts() {
+	// check for every ghost which direction is the best for her
+	// using manhattan distance
+	// get all ghosts indexes
+	for(var k=0; k < ghostAmount; k++){
+		var ghost_row = ghosts[k].i;
+		var ghost_column = ghosts[k].j;
+		var pac_row = shape.i;
+		var pac_column = shape.j;
+		// define different directions for each ghost
+		var up = new Object();
+		var down = new Object();
+		var left = new Object();
+		var right = new Object();
+		var dirs = new Array();
+		// up
+		if (
+			ghost_column > 0 &&
+			board[ghost_row][ghost_column - 1] != 5 &&
+			ghostBoard[ghost_row][ghost_column - 1] != 6
+			){
+			up.i = ghost_row;
+			up.j = ghost_column - 1;
+			var ghostGoUpDist = Math.abs((ghost_column-1)-pac_column) + Math.abs((ghost_row)-pac_row);
+			up.dist = ghostGoUpDist;
+			dirs.push(up);
+		}
+		// down
+		if (
+			ghost_column < (boardlength-1) && 
+			board[ghost_row][ghost_column + 1] != 5 &&
+			ghostBoard[ghost_row][ghost_column + 1] != 6
+			){
+			down.i = ghost_row;
+			down.j = ghost_column + 1;
+			var ghostGoDownDist = Math.abs((ghost_column+1)-pac_column) + Math.abs((ghost_row)-pac_row);
+			down.dist = ghostGoDownDist;
+			dirs.push(down);
+		}
+		// left
+		if (
+			ghost_row > 0 && 
+			board[ghost_row - 1][ghost_column] != 5 &&
+			ghostBoard[ghost_row -1][ghost_column] != 6
+			) {
+			left.i = ghost_row - 1;
+			left.j = ghost_column;
+			var ghostGoLeftDist = Math.abs((ghost_column)-pac_column) + Math.abs((ghost_row-1)-pac_row);
+			left.dist = ghostGoLeftDist;
+			dirs.push(left);
+		}
+		// right
+		if (
+			ghost_row < (boardlength-1) && 
+			board[ghost_row + 1][ghost_column] != 5 &&
+			ghostBoard[ghost_row + 1][ghost_column] != 6
+			) {
+			right.i = ghost_row + 1;
+			right.j = ghost_column;
+			var ghostGoRightDist = Math.abs((ghost_column)-pac_column) + Math.abs((ghost_row+1)-pac_row);
+			right.dist = ghostGoRightDist;
+			dirs.push(right);
+		}
+		
+		// loop to find a way with minimum distance from ghost k, to pacman
+		var min = dirs[0].dist;
+    	var minIndex = 0;
+    	for (var t = 1; t < dirs.length; t++) {
+        	if (dirs[t].dist < min) {
+        	    minIndex = t;
+        	    min = dirs[t].dist;
+        	}
+    	}
+		// draw in another place
+		ghostBoard[ghosts[k].i][ghosts[k].j] = 0;
+		// update specific ghost on the change of place
+		ghosts[k].i = dirs[minIndex].i;
+		ghosts[k].j = dirs[minIndex].j;
+		// draw in here
+		ghostBoard[ghosts[k].i][ghosts[k].j] = 6;
+
+		// At the end of ghost move, check if it ate pacman
+		// only check if it ate pacman, if there is no use in chillPill
+		if(ghostsCanAttack){
+			checkIfPacmanJustBeenAte();
+		}	
+	}
+}
+
+function UpdateSpecialPoint(){
+	// special point - choose random combination of i,j
+	var randDirArr = new Array();
+	var special_row = specialPoint.i;
+	var special_column = specialPoint.j;
+	var up = new Object();
+	var down = new Object();
+	var left = new Object();
+	var right = new Object();
+	// up
+	if (special_column > 0 && board[special_row][special_column - 1] != 5) {
+		up.i = special_row;
+		up.j = special_column - 1;
+		randDirArr.push(up);
+	}
+	// down
+	if (special_column < (boardlength-1) && board[special_row][special_column + 1] != 5) {
+		down.i = special_row;
+		down.j = special_column + 1;
+		randDirArr.push(down);
+	}
+	// left
+	if (special_row > (boardlength-1) && board[special_row - 1][special_column] != 5) {
+		left.i = special_row - 1;
+		left.j = special_column;
+		randDirArr.push(left);
+	}
+	// right
+	if (special_row < (boardlength-1) && board[special_row + 1][special_column] != 5) {
+		right.i = special_row + 1;
+		right.j = special_column;
+		randDirArr.push(right);
+	}
+	var randDir = Math.floor(Math.random() * (randDirArr.length));
+	// switch places of special point randomly
+	specialPointBoard[specialPoint.i][specialPoint.j] = 0;
+	specialPoint.i = (randDirArr[randDir]).i;
+	specialPoint.j = (randDirArr[randDir]).j;
+	specialPointBoard[specialPoint.i][specialPoint.j] = 7;
+
+	// points for eating special food
+	// can only eat once in a game
+	if(specialPointBoard[shape.i][shape.j] == 7){
+		score+=50;
+		// finish it
+		window.clearInterval(interval_specialPoint);
+		specialPointBoard[shape.i][shape.j] = 0;		
 	}
 }
 
 function UpdatePosition() {
 	board[shape.i][shape.j] = 0;
 	var x = GetKeyPressed();
+	// move pacman
+
+	// up
 	if (x == 1) {
-		if (shape.j > 0 && board[shape.i][shape.j - 1] != 4) {
+		if (shape.j > 0 && board[shape.i][shape.j - 1] != 5) {
 			shape.j--;
+			// for different faces direction
+			startAngle=1.35 * Math.PI;
+			finishAngle=1.65 * Math.PI;
+			flag_clockwise = true;
+			eye_x = 15;
+			eye_y = -2;
 		}
 	}
+	// down
 	if (x == 2) {
-		if (shape.j < 9 && board[shape.i][shape.j + 1] != 4) {
+		if (shape.j < (boardlength-1) && board[shape.i][shape.j + 1] != 5) {
 			shape.j++;
+			// for different faces direction
+			startAngle=0.65 * Math.PI;
+			finishAngle=0.35 * Math.PI;
+			flag_clockwise = false;
+			eye_x = 15;
+			eye_y = -2;
 		}
 	}
+	// left
 	if (x == 3) {
-		if (shape.i > 0 && board[shape.i - 1][shape.j] != 4) {
+		if (shape.i > 0 && board[shape.i - 1][shape.j] != 5) {
 			shape.i--;
+			// for different faces direction
+			startAngle=0.85 * Math.PI;
+			finishAngle=1.15 * Math.PI;
+			flag_clockwise = true;
+			eye_x = 5 ;
+			eye_y = -15;	
 		}
 	}
+	// right
 	if (x == 4) {
-		if (shape.i < 9 && board[shape.i + 1][shape.j] != 4) {
+		if (shape.i < (boardlength-1) && board[shape.i + 1][shape.j] != 5) {
 			shape.i++;
+			// for different faces direction
+			startAngle=0.15 * Math.PI;
+			finishAngle=1.85 * Math.PI;
+			flag_clockwise = false;
+			eye_x = 5 ;
+			eye_y = -15;
 		}
 	}
-	if (board[shape.i][shape.j] == 1) {
-		score++;
+	// pacman ate slowPill
+	if(board[shape.i][shape.j] == 9){
+		activateSlowPill();
 	}
-	board[shape.i][shape.j] = 2;
+	// pacman ate chillPill
+	if(board[shape.i][shape.j] == 8){
+		activateChillPill();
+	}
+	// points for eating 5 points food
+	if (board[shape.i][shape.j] == 1) {
+		score+=5;
+		amountOfBallsLeft--;
+	}
+	// points for eating 15 points food
+	if (board[shape.i][shape.j] == 2) {
+		score+=15;
+		amountOfBallsLeft--;
+	}
+	// points for eating 25 points food
+	if (board[shape.i][shape.j] == 3) {
+		score+=25;
+		amountOfBallsLeft--;
+	}
+	// points for eating special food
+	// can only eat once in a game
+	if(specialPointBoard[shape.i][shape.j] == 7){
+		score+=50;
+		// finish it
+		window.clearInterval(interval_specialPoint);
+		specialPointBoard[shape.i][shape.j] = 0;		
+	}
+	// define next location of pacman
+	board[shape.i][shape.j] = 4;
+
 	var currentTime = new Date();
 	time_elapsed = (currentTime - start_time) / 1000;
+	// turn pacman into green if it is very good
 	if (score >= 20 && time_elapsed <= 10) {
 		pac_color = "green";
 	}
-	if (score == 50) {
+	// end game because of time limit
+	// or end of balls of points
+	if (
+		time_elapsed >= timeOfGame ||
+		amountOfBallsLeft == 0
+	){
+		if (score < 100){
+			window.alert("You are better than "+score+" points!");
+		}
+		else{
+			window.alert("Winner!!!");
+		}
 		window.clearInterval(interval);
-		window.alert("Game completed");
-	} else {
-		Draw();
+		window.clearInterval(interval_ghosts);
+		window.clearInterval(interval_specialPoint);
+	}
+	// after pacman moved, check if he run into ghosts
+	// only check if ghost ate pacman, if there is no use in chillPill
+	if(ghostsCanAttack){
+		checkIfPacmanJustBeenAte();
+	}	
+	Draw();
+}
+
+function checkIfPacmanJustBeenAte(){
+	// reset ghosts when pacman get eaten
+	for(var m=0; m<ghostAmount; m++){
+		if (
+			ghosts[m].i == shape.i &&
+			ghosts[m].j == shape.j
+		){
+			flagContinueToResetPacman = true;
+			// stop checking for catching pacman
+			// if it was caught
+			break;
+		}
+	}
+	if(flagContinueToResetPacman){
+		// reset ghosts
+		for(var m=0; m<ghostAmount; m++){
+			
+			ghostBoard[ghosts[m].i][ghosts[m].j] = 0;
+			ghosts[m].i=arrOfPosToResetGhosts[m].i;
+			ghosts[m].j=arrOfPosToResetGhosts[m].j;
+			ghostBoard[ghosts[m].i][ghosts[m].j] = 6;
+		}
+
+		// reset pacman and other stuff, if ghosts run into pacman
+		board[shape.i][shape.j] = 0;
+		shape.i = Math.floor(Math.random() * 9 + 1);
+		shape.j = Math.floor(Math.random() * 9 + 1);
+
+		// update new pacman
+		var emptyCell = findRandomEmptyCell(board);
+		shape.i = emptyCell[0];
+		shape.j = emptyCell[1];
+		board[shape.i][shape.j] = 2;
+
+		// low score for being eaten
+		score -= 10;
+		// create string according to id of image of life.
+		var stringOfLifeCalculated = "life"+amountLifeLeft;
+		document.getElementById(stringOfLifeCalculated).style.display="none"; 
+		amountLifeLeft--;
+		if(amountLifeLeft == 0){
+			window.clearInterval(interval);
+			window.clearInterval(interval_ghosts);
+			window.clearInterval(interval_specialPoint);
+			window.alert("Loser!");
+		}
+		// not allowing negative amount of points
+		if (score < 0){
+			score = 0 ;
+		}
+		flagContinueToResetPacman = false;
+	}	
+}
+
+function newGame(){
+	window.clearInterval(interval);
+	window.clearInterval(interval_ghosts);
+	window.clearInterval(interval_specialPoint);
+	Start();
+	for(var i=1; i<6; i++){
+		var stringOfLifeCalculated = "life"+i;
+		document.getElementById(stringOfLifeCalculated).style.display="block"; 
+	}
+	initIntervals();
+	
+	
+}
+
+var imgOfGhosts = new Array();
+
+function activateChillPill(){
+	// if it turn off now
+	if(ghostsCanAttack){
+		ghostsCanAttack = false;
+		// save each ghost image to turn back later
+		for(var m=0; m<ghostAmount; m++){
+			imgOfGhosts.push(ghosts[m].img);
+			ghosts[m].img = new Image();
+			ghosts[m].img.src = "./images/transparent_ghost.jpg";
+		}
+		setTimeout(function(){
+			activateChillPill();
+		  }, 10000);
+	}
+	// if it turn off now - stop chillPill
+	else{
+		ghostsCanAttack = true;
+		for(var m=0; m<ghostAmount; m++){
+			// bring images back to their ghosts
+			ghosts[m].img = imgOfGhosts[m];
+		}
 	}
 }
+
+function activateSlowPill(){
+	// if it turn off now
+	if(!ghostsSlowDown){
+		ghostsSlowDown = true;
+		// slow down intervals of ghosts
+		clearInterval(interval_ghosts);
+		interval_ghosts = setInterval(UpdateGhosts, 1000);
+
+		setTimeout(function(){
+			activateSlowPill();
+		  }, 5000);
+	}
+	// if it turn off now - stop slowPill
+	else{
+		ghostsSlowDown = false;
+		clearInterval(interval_ghosts);
+		interval_ghosts = setInterval(UpdateGhosts, 550);
+	}
+}
+
+
+////GAME/////

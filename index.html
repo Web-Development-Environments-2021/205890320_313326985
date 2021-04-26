@@ -1,21 +1,204 @@
+liad
+
 <!DOCTYPE html>
 <html>
 	<head>
+		<title>Liad and Shahar - Pacman</title>
+		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+		<link rel="stylesheet" type="text/css" href="style.css" />
 		<script src="./jquery-3.4.1.slim.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/additional-methods.js"></script>
+		<script src="https://kit.fontawesome.com/ae34ec23f6.js" crossorigin="anonymous"></script>
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Press+Start+2P&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100&display=swap" rel="stylesheet">
 		<script type="text/javascript" src="./app.js"></script>
+		
 	</head>
 
+	<header>
+		<p id="head"> <img src="favicon-16x16.png"> Pacman by Liad Nahshon and Shahar Scheranski</p>
+	</header>
 	<body>
-		<div id="score">
-			<label for="lblScore">SCORE:</label>
-			<input id="lblScore" type="text" />
+		<div id = "Menu">
+			<li><a onclick="showWelcome()">Home</a></li>
+			<li><a id=signup onclick="showRegister()">Signup</a></li>
+			<li><a id=login onclick="showLogin()">Login</a></li>
+			<li><a id=gameMenu onclick="showGame()" style="display: none;">Game</a></li>
+			<li><a id=settings onclick="showSettings()" style="display: none;">Settings</a></li>
+			<li><a id=logout onclick="logOut()" style="display: none;">Logout</a></li>
+			<li><a onclick="showAbout()">About</a></li>
+			<li><a id=hello><span>Hello, </span><span id=showuser>guest</span><span>!</span></a></li>
+		
 		</div>
-		<div id="time">
-			<label for="lblTime">TIME:</label>
-			<input id="lblTime" type="text" />
+		<div id = "Welcome">
+			<br>
+			<p class = "glow"><b>WELCOME TO PAC-MAN!</b></p>
+				<button id="toRegister" onclick="showRegister()">
+					Sign Up
+				</button>
+				<button id="toLogin" onclick="showLogin()">
+					Log In
+				</button>
 		</div>
-		<div id="game">
-			<canvas id="canvas" height="600" width="600"></canvas>
+
+		<div id = "Register" style="display:none">
+			
+			<h1>You can register here!</h1>
+				<form class="cmxform" id="signupForm" style="padding: 10px" >
+						<p>
+							<label for="username">User Name</label><br>								
+							<input id="username" name="username" type="text">
+						</p>
+
+						<p>
+							<label for="fullname">Full Name</label><br>	
+							<input id="fullname" name="fullname" type="text">
+						</p>
+
+						<p>
+							<label for="dateofbirth">Date of birth</label><br>	
+							<input id="dateofbirth" name="dateofbirth" type="date">
+						</p>
+						<p>
+							<label for="email">Email</label><br>									
+							<input id="email" name="email" type="email">
+						</p>
+						<p>
+							<label for="password">Password</label><br>	
+							<input id="password" name="password" type="password">
+						</p>
+						<p>
+							<label for="confirm_password">Confirm password</label><br>									
+							<input id="confirm_password" name="confirm_password" type="password">
+						</p>
+						<br>
+						<p>
+							<input id="register_submit" type="submit" value="Sign Up">
+							<input id="reset_submit" type="reset" value="Reset" onclick="noErrors()">
+						</p>
+				</form>
+
+		</div>
+				
+		<div id = "Login" style="display:none">
+			<h1>You can login here!</h1>
+			<form class="cmxform" id="loginForm" style="padding: 10px">
+						<p>
+							<label for=loginuser>Username</label>
+							<input id=loginuser name="loginuser" type=text>
+						</p>
+						<p>
+							<label for=loginpassword>Password</label>
+							<input id="loginpassword" type="password" name="loginpassword">
+							<input type="checkbox" onclick="showPassword()" ><span style="font-size: 14px;">Show password</span>
+						</p>
+						<p>
+							<input id= login_submit class="login_submit" type="submit" value="Login">
+							<input id= reset_login type="reset" value="Reset">
+						</p>
+			</form>
+		</div>
+
+		<div id = "Settings" style="display:none">
+			<h1>Please select yours game settings!</h1>
+			<form class="cmxform" id="settingsForm" style="padding: 10px" >
+						<h5>Game buttons:</h5>
+						<p>
+							<label for=up>Up button: </label>
+							<input id=up name="up" type=button onkeydown="updateButton(event, 'up')">
+							<label for=down>Down button: </label>
+							<input id=down name="down" type=button onkeydown="updateButton(event, 'down')">
+							<label for=right>Right button: </label>
+							<input id=right name="right" type=button onkeydown="updateButton(event, 'right')">
+							<label for=left>Left button: </label>
+							<input id=left name="left" type=button onkeydown="updateButton(event, 'left')">
+						</p>
+						<h5>Number of balls:</h5>
+						<p>
+							<label for=rangeballs>Range: </label>
+							<input class=slider type="range" id="rangeballs" name="rangeballs" min="50" value="50" max="90" oninput="updateballsNumber()">
+							<label>Value: <span id="ballsvalue">50</span></label>
+
+						</p>
+						<h5>Balls colors:</h5>
+						<p>
+							<label for=5point>5 points: </label>
+							<input type="color" id="5point" name="5point" value="#ccffeb" oninput="updateColors('5points')">
+							<label for=15point>15 points: </label>
+							<input type="color" id="15point" name="15point" value="#ccccff" oninput="updateColors('15points')">
+							<label for=25point>25 points: </label>
+							<input type="color" id="25point" name="25point" value="#ffc299" oninput="updateColors('25points')">
+						</p>
+						<h5>Duration of the game:</h5>
+						<p>
+							<label for=rangeduration>Range: </label>
+							<input class=slider type="range" id="rangeduration" name="rangeduration" min="60" value="60" max="120" oninput="updateDuration()">
+							<label>Seconds: <span id="durationvalue">60</span></label>
+						</p>
+						<h5>Monsters amount:</h5>
+						<p>
+							<input type="number" id="monsterquantity" name="monsterquantity" min="1" max="4" value="1" oninput="updateMonsters()">
+						</p>
+						<p>
+							<input id=s1 class="random" type="button" value="Random settings" onclick="randomSettings()">
+							<input id=s2 type="button" value="Deafult settings" onclick="resetSettings()">
+							<br>
+							<br>
+							<input id=s3 class="save_submit" type="submit" value="Start Game">
+						</p>
+			</form>
+		</div>
+
+			<div id = "About" style="display:none">
+			<div id="aboutContent">
+			<span class="close">&times;</span>
+			<h5>About!</h5>
+			</br class= "forAbout">
+			 Liad Nahshon
+			</br class= "forAbout">
+			Shahar Shcheranski 
+			</br class= "forAbout">
+			 jquery Plugin, took template from w3schools.
+			</div>
+			</div>
+
+		<div id = "Game" style="display:none">
+				<h1>Start playing!</h1>	
+				<div class=menu style="float:right;">
+					<a>
+						<label for="lblScore">SCORE:</label>
+						<input id="lblScore" type="text" />
+						<label for="lblTime">TIME:</label>
+						<input id="lblTime" type="text" /><br><br>
+						<label for="lbllives">You have life left:</label><br>
+						<img class ="life" id="life1" src = "heart.png" height="25" width="25">
+						<img class ="life" id="life2" src = "heart.png" height="25" width="25">
+						<img class ="life" id="life3" src = "heart.png" height="25" width="25">
+						<img class ="life" id="life4" src = "heart.png" height="25" width="25">
+						<img class ="life" id="life5" src = "heart.png" height="25" width="25"><br> 
+						<button id="newGame" onclick="newGame()">
+							Start a new game
+						</button>
+					</a>
+				</div>
+
+				
+				<div class=main id="playForm" style=display:block; >
+					<canvas id="canvas" height="1200" width="1200"></canvas>
+				</div>			
+				
 		</div>
 	</body>
+	<footer>
+		<a class=contact href="https://www.facebook.com/shahar.shcheranski" ><i class="fa fa-facebook-official"></i></a>
+		<a class=contact href="https://www.instagram.com/shahar_shche/" ><i class="fa fa-instagram"></i></a>
+		<a class=contact href="https://www.linkedin.com/in/shahar-shcheranski-18a8431b5/" ><i class="fa fa-linkedin"></i></a>
+		<a class=contact href="https://github.com/ShaharShc" ><i class="fab fa-github"></i></a>
+	</footer>
 </html>
