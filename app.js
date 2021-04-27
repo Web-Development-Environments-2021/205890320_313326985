@@ -20,6 +20,7 @@ var showLeft = 'ArrowLeft';
 var loginUser;
 var context;
 var playSound;
+var checkboxsound;
 
 
 $(document).ready( function () {
@@ -135,6 +136,12 @@ $(document).ready( function () {
 			document.getElementById("signup").style.display = 'none';
 			document.getElementById("logout").style.display = 'block';
 			document.getElementById("settings").style.display = 'block';
+			document.getElementById("toRegister").disabled= true;
+			document.getElementById("toRegister").style.backgroundColor ='#ffaaaf';
+			document.getElementById("toRegister").style.cursor ='not-allowed';
+			document.getElementById("toLogin").disabled= true;
+			document.getElementById("toLogin").style.backgroundColor ='#ffaaaf';
+			document.getElementById("toLogin").style.cursor ='not-allowed';
 			resetSettings();
 			showSettings();
             //reset details
@@ -184,8 +191,8 @@ $(document).ready( function () {
 			playSound = document.getElementById("myAudio");
 			playSound.volume = 0.1;
 			playSound.currentTime = 0;
-			playSound.play();
 			document.getElementById('accept').checked = true;
+			controlSound()
 			showChosenSettings()
 			context = canvas.getContext("2d");
 			Start();
@@ -327,9 +334,6 @@ function updateballsNumber(){
 }
 
 function updateDuration(){
-	var slider = document.getElementById("rangeduration");
-	var output = document.getElementById("durationvalue");
-	output.innerHTML = slider.value;
 	gameDuration = parseInt(document.getElementById("rangeduration").value);
 
 }
@@ -410,7 +414,6 @@ function randomSettings(){
 
 	//random duration
 	document.getElementById("rangeduration").value = Math.floor(Math.random() * (61) + 60);
-	document.getElementById("durationvalue").innerHTML = document.getElementById("rangeduration").value;
 	gameDuration = parseInt(document.getElementById("rangeduration").value);
 
 	//random monsters
@@ -453,7 +456,6 @@ function resetSettings(){
 	
 	//deafult duration
 	document.getElementById("rangeduration").value = 60;
-	document.getElementById("durationvalue").innerHTML = 60;
 	gameDuration = parseInt(document.getElementById("rangeduration").value);
 	
 	//deafult monsters
@@ -467,9 +469,9 @@ function showWelcome() {
 	if(gameStarted){
 		// if game already started
 		finishIntervals();
-		var checkboxsound = document.getElementById('accept');
+		checkboxsound = document.getElementById('accept');
 		checkboxsound.checked = false;
-		controlSound(checkboxsound);
+		controlSound();
 	} 
     document.getElementById("Game").style.display="none"; 
     document.getElementById("Login").style.display="none"; 
@@ -483,9 +485,9 @@ function showLogin(){
 	if(gameStarted){
 		// if game already started
 		finishIntervals();
-		var checkboxsound = document.getElementById('accept');
+		checkboxsound = document.getElementById('accept');
 		checkboxsound.checked = false;
-		controlSound(checkboxsound);
+		controlSound();
 	}
 	document.getElementById("Game").style.display="none"; 
 	document.getElementById("Login").style.display="block"; 
@@ -499,9 +501,9 @@ function showRegister(){
 	if(gameStarted){
 		// if game already started
 		finishIntervals();
-		var checkboxsound = document.getElementById('accept');
+		checkboxsound = document.getElementById('accept');
 		checkboxsound.checked = false;
-		controlSound(checkboxsound);
+		controlSound();
 	}
 	document.getElementById("Game").style.display="none"; 
 	document.getElementById("Login").style.display="none"; 
@@ -544,9 +546,9 @@ function showSettings(){
 	if(gameStarted){
 		// if game already started
 		finishIntervals();
-		var checkboxsound = document.getElementById('accept');
+		checkboxsound = document.getElementById('accept');
 		checkboxsound.checked = false;
-		controlSound(checkboxsound);
+		controlSound();
 	}
 	document.getElementById("Game").style.display="none"; 
 	document.getElementById("Login").style.display="none"; 
@@ -567,9 +569,18 @@ function logOut(){
 	document.getElementById("settings").style.display = 'none';
 	document.getElementById("login").style.display = 'block';
 	document.getElementById("signup").style.display = 'block';
+	document.getElementById("toRegister").disabled= false;
+	document.getElementById("toRegister").style.backgroundColor ='#fa4756';
+	document.getElementById("toRegister").style.cursor ='pointer';
+	document.getElementById("toLogin").disabled= false;
+	document.getElementById("toLogin").style.backgroundColor ='#fa4756';
+	document.getElementById("toLogin").style.cursor ='pointer';
 	resetSettings();
 	showWelcome();
 	loginUser = none;
+	checkboxsound = document.getElementById('accept');
+	checkboxsound.checked = false;
+	controlSound();
 	//reset game
 }
 
@@ -709,6 +720,9 @@ function Start() {
 	pac_color = "#f8be00";
 	var cnt = boardlength*boardlength;
 	var pacman_remain = 1;
+	var c1=0;
+	var c2=0;
+	var c3=0;
 	start_time = new Date();
 	// define array that helps rearrange ghosts when they eat pacman
 	var pos_1 = new Object();
@@ -751,6 +765,10 @@ function Start() {
 		flag_9_9 = true;
 	}
 	
+	
+
+
+
 	///////////////// init board
 	for (var i = 0; i < boardlength; i++) {
 		board[i] = new Array();
@@ -908,50 +926,60 @@ function Start() {
 				// obstacles
 				board[i][j] = 5;
 			}
-			else {
-				// define randomly food places
-				var randomNum = Math.random();
-				if (randomNum <= (1.0 * food_remain) / cnt) {
-					if (amountOfFood-food_remain < amount5Pts){
-						board[i][j] = 1;
-						food_remain--;
-					}
-					else if (food_remain > amount25Pts){
-						board[i][j] = 2;
-						food_remain--;
-					}
-					else if (food_remain >= 0){
-						board[i][j] = 3;
-						food_remain--;
-					}
-				// pacman cannot start at the corners
-				// pacman cannot start at the center of the board
-				} else if (
-					randomNum < (1.0 * (pacman_remain + food_remain)) / cnt && 
-					!(i == 0 && j == 0) &&
-					!(i == 0 && j == boardlength-1) &&
-					!(i == boardlength-1 && j == 0) &&
-					!(i == boardlength-1 && j == boardlength-1) &&
-					!(i == centerBoard && j == centerBoard)
-				)
-				{
-					shape.i = i;
-					shape.j = j;
-					pacman_remain--;
-					board[i][j] = 4;
-				} else {
-					board[i][j] = 0;
-				}
-				cnt--;
+			else{
+				board[i][j] = 0;
 			}
 		}
 	}
+
+	
 	while(food_remain > 0){
-		var emptyCell = findRandomEmptyCell(board);
-		board[emptyCell[0]][emptyCell[1]] = 3;
-		food_remain--;
+		// food 5pts
+		if(c1<amount5Pts){
+			var emptyCell = findRandomEmptyCell(board);
+			board[emptyCell[0]][emptyCell[1]] = 1;
+			food_remain--;
+			c1++;
+		}
+		// food 15pts
+		else if(c2<amountOfFood-amount25Pts -amount5Pts){
+			var emptyCell = findRandomEmptyCell(board);
+			board[emptyCell[0]][emptyCell[1]] = 2;
+			food_remain--;
+			c2++;
+		}
+		// food 25pts
+		else if(c3<amount25Pts){
+			var emptyCell = findRandomEmptyCell(board);
+			board[emptyCell[0]][emptyCell[1]] = 3;
+			food_remain--;
+			c3++;
+		}
 	}
 	
+	// set location to pacman
+	// pacman cannot start at the corners
+	// pacman cannot start at the center of the board
+	var i = Math.floor(Math.random() * (boardlength-1) + 1);
+	var j = Math.floor(Math.random() * (boardlength-1) + 1);
+	while(
+		!(i == 0 && j == 0) &&
+		!(i == 0 && j == boardlength-1) &&
+		!(i == boardlength-1 && j == 0) &&
+		!(i == boardlength-1 && j == boardlength-1) &&
+		!(i == centerBoard && j == centerBoard) &&
+		board[i][j] != 0
+		) 
+	{
+		i = Math.floor(Math.random() * (boardlength-1) + 1);
+		j = Math.floor(Math.random() * (boardlength-1) + 1);
+	}	
+	shape.i = i;
+	shape.j = j;
+	board[i][j] = 4;
+	pacman_remain--;
+
+
 	// create special point
 	// define special point at the center of the board
 	// to find the center of board, parse int of the half of board length of row
@@ -1071,6 +1099,11 @@ function Draw() {
 			// food (5 points)
 			} else if (board[i][j] == 1) {
 				context.beginPath();
+				context.arc(center.x, center.y, 12, 0, 2 * Math.PI); // circle
+				context.fillStyle = "#bdd6e0"; //color
+				context.fill();
+
+				context.beginPath();
 				context.arc(center.x, center.y, 10, 0, 2 * Math.PI); // circle
 				context.fillStyle = color_5Pts; //color
 				context.fill();	
@@ -1078,12 +1111,22 @@ function Draw() {
 			}  else if (board[i][j] == 2) {
 				context.beginPath();
 				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
+				context.fillStyle = "#bdd6e0"; //color
+				context.fill();
+
+				context.beginPath();
+				context.arc(center.x, center.y, 13, 0, 2 * Math.PI); // circle
 				context.fillStyle = color_15Pts; //color
 				context.fill();	
 			// food (25 points)	
 			} else if (board[i][j] == 3) {
 				context.beginPath();
-				context.arc(center.x, center.y, 20, 0, 2 * Math.PI); // circle
+				context.arc(center.x, center.y, 18, 0, 2 * Math.PI); // circle
+				context.fillStyle = "#bdd6e0"; //color
+				context.fill();
+
+				context.beginPath();
+				context.arc(center.x, center.y, 16, 0, 2 * Math.PI); // circle
 				context.fillStyle = color_25Pts; //color
 				context.fill();	
 			} 
@@ -1099,7 +1142,7 @@ function Draw() {
 			else if (board[i][j] == 5) {
 				context.beginPath();
 				context.rect(center.x - 30, center.y - 30, 60, 60);
-				context.fillStyle = "grey"; //color
+				context.fillStyle = "rgb(25, 86, 165)"; //color
 				context.fill();
 			}
 			// food (special points)
@@ -1136,16 +1179,21 @@ function UpdateGhosts() {
 		var directionForbidden = new Array();
 		var arrayIfStuck = new Array();
 		var dirIfStuck = new Object();
-		// can recognize a pattern by indexes
-		if(ghosts[k].lastDistances.length == 3){
-			if(ghosts[k].lastDistances[0].i ==
-			   ghosts[k].lastDistances[2].i &&
-			   ghosts[k].lastDistances[0].j ==
-			   ghosts[k].lastDistances[2].j
-			)
-			directionForbidden = ghosts[k].lastDistances;
+
+		for(var t=0; t<ghosts[k].lastDistances.length; t++){
+			for(var a=0; a<ghosts[k].lastDistances.length; a++){
+				if(ghosts[k].lastDistances[t].i ==
+					ghosts[k].lastDistances[a].i &&
+	 
+					ghosts[k].lastDistances[t].i ==
+					ghosts[k].lastDistances[a].i 
+				)
+				{
+					directionForbidden = ghosts[k].lastDistances;
+				}
+			}
 		}
-		var whichDirection = new Array();
+
 		// up
 		if (
 			ghost_column > 0 &&
@@ -1175,11 +1223,11 @@ function UpdateGhosts() {
 					up.dist = ghostGoUpDist;
 					dirs.push(up);
 					// if we need to update list
-					if(ghosts[k].lastDistances.length == 3){
+					if(ghosts[k].lastDistances.length == 7){
 						// remove oldest
 						ghosts[k].lastDistances.shift();
 					}
-					whichDirection.push("up");
+					// whichDirection.push("up");
 				}
 			
 		}
@@ -1212,11 +1260,11 @@ function UpdateGhosts() {
 				down.dist = ghostGoDownDist;
 				dirs.push(down);
 				// if we need to update list
-				if(ghosts[k].lastDistances.length == 3){
+				if(ghosts[k].lastDistances.length == 7){
 					// remove oldest
 					ghosts[k].lastDistances.shift();
 				}
-				whichDirection.push("down");
+				// whichDirection.push("down");
 			}	
 		}
 		// left
@@ -1248,11 +1296,11 @@ function UpdateGhosts() {
 				left.dist = ghostGoLeftDist;
 				dirs.push(left);
 				// if we need to update list
-				if(ghosts[k].lastDistances.length == 3){
+				if(ghosts[k].lastDistances.length == 7){
 					// remove oldest
 					ghosts[k].lastDistances.shift();
 				}
-				whichDirection.push("left");
+				// whichDirection.push("left");
 			}
 			
 		}
@@ -1285,11 +1333,11 @@ function UpdateGhosts() {
 				right.dist = ghostGoRightDist;
 				dirs.push(right);
 				// if we need to update list
-				if(ghosts[k].lastDistances.length == 3){
+				if(ghosts[k].lastDistances.length == 7){
 					// remove oldest
 					ghosts[k].lastDistances.shift();
 				}
-				whichDirection.push("right");
+				// whichDirection.push("right");
 			}
 			
 		}
@@ -1492,9 +1540,9 @@ function UpdatePosition() {
 		window.clearInterval(interval_ghosts);
 		window.clearInterval(interval_specialPoint);
 		// stops sound when finish game
-		var checkboxsound = document.getElementById('accept');
+		checkboxsound = document.getElementById('accept');
 		checkboxsound.checked = false;
-		controlSound(checkboxsound);
+		controlSound();
 	}
 	else{
 		// after pacman moved, check if he run into ghosts
@@ -1554,9 +1602,9 @@ function checkIfPacmanJustBeenAte(){
 			window.clearInterval(interval_ghosts);
 			window.clearInterval(interval_specialPoint);
 			window.alert("Loser!");
-			var checkboxsound = document.getElementById('accept');
+			checkboxsound = document.getElementById('accept');
 			checkboxsound.checked = false;
-			controlSound(checkboxsound);
+			controlSound();
 		}
 		// not allowing negative amount of points
 		if (score < 0){
@@ -1574,8 +1622,8 @@ function newGame(){
 	fillHearts();
 	initIntervals();
 	playSound.currentTime = 0;
-	playSound.play();
 	document.getElementById('accept').checked = true;
+	controlSound();
 
 }
 
@@ -1656,8 +1704,9 @@ function showChosenSettings(){
 
 }
 
-function controlSound(checkbox){
-	if (checkbox.checked){
+function controlSound(){
+	checkboxsound = document.getElementById('accept')
+	if (checkboxsound.checked){
 		playSound.play();
 		document.getElementById('on').style.display = 'block'
 		document.getElementById('off').style.display = 'none'

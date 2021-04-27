@@ -1,4 +1,4 @@
-/*LIAD*/
+
 body {
 	background-image: url(6874304-pacman-wallpaper.jpg);
 	background-repeat: no-repeat;
@@ -7,7 +7,6 @@ body {
 	padding:0;
 	margin: 0;
 }
-
 
 
 header
@@ -35,12 +34,12 @@ header
 	padding: 0;
 	top: 0;
 	overflow: hidden;
-	position: fixed;
 	background-color: #ff9633;
 	box-shadow: 0px 0 7px 0 rgba(77, 77, 77, 0.7);
 	z-index: 1;
   	border-radius: 20px 20px;
 	border: 5px solid black;
+	position: fixed;
 }
 
 /*list element */
@@ -101,7 +100,7 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
   }
 
 
-#s1, #s2, #newGame, #register_submit, #reset_submit, #login_submit, #reset_login{
+#s1, #s2, #s3, #newGame, #register_submit, #reset_submit, #login_submit, #reset_login{
 	padding: 10px 20px;
 	font-size: 14px;
 	text-align: center;
@@ -116,7 +115,7 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	border: 5px solid rgb(255, 255, 255);
 }
 
-#toRegister,#toLogin, #s3 {
+#toRegister,#toLogin {
 	padding: 15px 25px;
 	font-size: 24px;
 	text-align: center;
@@ -172,7 +171,6 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	font-family: 'Noto Sans JP', sans-serif;
 	-webkit-animation: animatezoom 0.6s;
 	animation: animatezoom 0.6s;
-	z-index: 1;
 
   }
 
@@ -223,7 +221,7 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	font-size: 14px;
 
 }
-#monsterquantity{
+#monsterquantity, #rangeduration{
 	width: 30%;
 	padding: 5px 5px;
 	margin: 2px 0;
@@ -238,7 +236,7 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	font-size: 14px;
 }
 
-#username:hover, #fullname:hover, #dateofbirth:hover, #email:hover, #password:hover, #confirm_password:hover, #loginuser:hover, #loginpassword:hover, input[type=color]:hover, #monsterquantity:hover
+#username:hover, #fullname:hover, #dateofbirth:hover, #email:hover, #password:hover, #confirm_password:hover, #loginuser:hover, #loginpassword:hover, input[type=color]:hover, #monsterquantity:hover, #rangeduration:hover
 {
 	border-color: rgba(0, 0, 0);
 	background-color: rgba(255, 255, 255, 0.678);
@@ -251,7 +249,7 @@ input[type=color]{
 	border-style: solid;
 	border-width: 1px;
 	border-radius: 10px;
-	height: 40px;
+	height: 30px;
 }
 
 
@@ -384,23 +382,28 @@ label.error {
 
 footer{
 	position: fixed;
-	left: 0;
 	bottom: 0;
+	padding: 0;
 	width: 100%;
+	height: 35px;
+	overflow: hidden;
 	background-color: rgb(0, 153, 224);
 	text-align: center;
 	border-radius: 20px 20px;
 	border: 5px solid black;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-weight: bold;
+	list-style-type: none;
 	z-index: -1;
 }
 
-#playFrom{
-	width: 600px;
-	height: 600px;
-}
+
+
 #canvas{
 	width: 100%;
 	height: 100%;
+	background-color: rgb(0, 0, 0);
+	border:solid rgb(25, 86, 165) 30px;
 }
 
 .contact{
@@ -422,14 +425,13 @@ footer{
 
   .menu {
 	width:25%;
-	height: 535px;
+	height: 640px;
 	text-align:center;
 	top:0;
 	bottom: 0;
 	float: left;
 	padding: 40px;
 	background-color:#181818;
-
 
   }
   
@@ -446,17 +448,11 @@ footer{
 	text-align: center;
 	float: left;
 	width:50%;
-	background-color: black;
-	height: 535px;
+	border-color: rgb(0, 0, 0);
+	height: 640px;
 
   }
 
-  #canvas{
-	width:100%;
-	height: 535px;
-	padding: 40px;
-
-  }
   #anotherfont1{
 	font-family: 'Noto Sans JP', sans-serif;
   }
@@ -474,12 +470,12 @@ footer{
 	height: 15px;
   }
 
-  #gamebackground{
+  #Game{
 	background-color:#181818;
 	-webkit-animation: animatezoom 0.6s;
 	animation: animatezoom 0.6s;
 	width: 100%;
-	height: 100%;
+	margin-top: 48px;
 	
 }
 
@@ -491,6 +487,7 @@ footer{
 	background-color:#FFA12B;
 	padding:7px 5px;
 	margin: 5.2px;
+	width: 90px;
 	
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	text-shadow: 0px 1px 0px rgb(0, 0, 0);
