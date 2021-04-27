@@ -1,4 +1,4 @@
-liad
+
 
 <!DOCTYPE html>
 <html>
@@ -22,10 +22,11 @@ liad
 	</head>
 
 	<header>
-		<p id="head"> <img src="favicon-16x16.png"> Pacman by Liad Nahshon and Shahar Scheranski</p>
+		<p id="head">Pacman by Liad Nachshon and Shahar Scheranski</p>
 	</header>
 	<body>
 		<div id = "Menu">
+			<li><a><img src="favicon-32x32.png" height="23" width="23"></a></li>
 			<li><a onclick="showWelcome()">Home</a></li>
 			<li><a id=signup onclick="showRegister()">Signup</a></li>
 			<li><a id=login onclick="showLogin()">Login</a></li>
@@ -48,9 +49,9 @@ liad
 		</div>
 
 		<div id = "Register" style="display:none">
-			
+			<br>
 			<h1>You can register here!</h1>
-				<form class="cmxform" id="signupForm" style="padding: 10px" >
+				<form class="cmxform" id="signupForm" >
 						<p>
 							<label for="username">User Name</label><br>								
 							<input id="username" name="username" type="text">
@@ -77,7 +78,6 @@ liad
 							<label for="confirm_password">Confirm password</label><br>									
 							<input id="confirm_password" name="confirm_password" type="password">
 						</p>
-						<br>
 						<p>
 							<input id="register_submit" type="submit" value="Sign Up">
 							<input id="reset_submit" type="reset" value="Reset" onclick="noErrors()">
@@ -87,6 +87,7 @@ liad
 		</div>
 				
 		<div id = "Login" style="display:none">
+			<br>
 			<h1>You can login here!</h1>
 			<form class="cmxform" id="loginForm" style="padding: 10px">
 						<p>
@@ -95,8 +96,8 @@ liad
 						</p>
 						<p>
 							<label for=loginpassword>Password</label>
-							<input id="loginpassword" type="password" name="loginpassword">
-							<input type="checkbox" onclick="showPassword()" ><span style="font-size: 14px;">Show password</span>
+							<input id="loginpassword" type="password" name="loginpassword"><br>
+							<input type="checkbox" onclick="showPassword()" ><span style="font-size: 12px;">Show password</span>
 						</p>
 						<p>
 							<input id= login_submit class="login_submit" type="submit" value="Login">
@@ -106,18 +107,16 @@ liad
 		</div>
 
 		<div id = "Settings" style="display:none">
-			<h1>Please select yours game settings!</h1>
-			<form class="cmxform" id="settingsForm" style="padding: 10px" >
+			<br>
+			<h1>Please select settings!</h1>
+			<form class="cmxform" id="settingsForm"  >
 						<h5>Game buttons:</h5>
 						<p>
-							<label for=up>Up button: </label>
-							<input id=up name="up" type=button onkeydown="updateButton(event, 'up')">
-							<label for=down>Down button: </label>
-							<input id=down name="down" type=button onkeydown="updateButton(event, 'down')">
-							<label for=right>Right button: </label>
-							<input id=right name="right" type=button onkeydown="updateButton(event, 'right')">
-							<label for=left>Left button: </label>
-							<input id=left name="left" type=button onkeydown="updateButton(event, 'left')">
+							<span style="font-size: 14px;">click the key and choose button to change it</span><br>
+							<input class=button id=up name="up" type=button onkeydown="updateButton(event, 'up')"><br>
+							<input class=button id=left name="left" type=button onkeydown="updateButton(event, 'left')">
+							<input class=button id=right name="right" type=button onkeydown="updateButton(event, 'right')"><br>
+							<input class=button id=down name="down" type=button onkeydown="updateButton(event, 'down')">
 						</p>
 						<h5>Number of balls:</h5>
 						<p>
@@ -129,11 +128,11 @@ liad
 						<h5>Balls colors:</h5>
 						<p>
 							<label for=5point>5 points: </label>
-							<input type="color" id="5point" name="5point" value="#ccffeb" oninput="updateColors('5points')">
+							<input type="color" id="5point" name="5point" oninput="updateColors('5points')">
 							<label for=15point>15 points: </label>
-							<input type="color" id="15point" name="15point" value="#ccccff" oninput="updateColors('15points')">
+							<input type="color" id="15point" name="15point" oninput="updateColors('15points')">
 							<label for=25point>25 points: </label>
-							<input type="color" id="25point" name="25point" value="#ffc299" oninput="updateColors('25points')">
+							<input type="color" id="25point" name="25point" oninput="updateColors('25points')">
 						</p>
 						<h5>Duration of the game:</h5>
 						<p>
@@ -146,8 +145,8 @@ liad
 							<input type="number" id="monsterquantity" name="monsterquantity" min="1" max="4" value="1" oninput="updateMonsters()">
 						</p>
 						<p>
-							<input id=s1 class="random" type="button" value="Random settings" onclick="randomSettings()">
-							<input id=s2 type="button" value="Deafult settings" onclick="resetSettings()">
+							<input id=s1 class="random" type="button" value="Random" onclick="randomSettings()">
+							<input id=s2 type="button" value="Deafult" onclick="resetSettings()">
 							<br>
 							<br>
 							<input id=s3 class="save_submit" type="submit" value="Start Game">
@@ -156,6 +155,7 @@ liad
 		</div>
 
 			<div id = "About" style="display:none">
+				<br>
 			<div id="aboutContent">
 			<span class="close">&times;</span>
 			<h5>About!</h5>
@@ -163,36 +163,80 @@ liad
 			 Liad Nahshon
 			</br class= "forAbout">
 			Shahar Shcheranski 
-			</br class= "forAbout">
+			</br >
 			 jquery Plugin, took template from w3schools.
 			</div>
 			</div>
 
-		<div id = "Game" style="display:none">
-				<h1>Start playing!</h1>	
-				<div class=menu style="float:right;">
+		<div id = "Game" style="display:none" >
+			<div id=gamebackground>
+			<br>
+				<div id=anotherfont2 class=menu>
+					<audio id="myAudio" src="sound.mp3" value="play"></audio>
 					<a>
-						<label for="lblScore">SCORE:</label>
-						<input id="lblScore" type="text" />
-						<label for="lblTime">TIME:</label>
-						<input id="lblTime" type="text" /><br><br>
-						<label for="lbllives">You have life left:</label><br>
+						<br>
+						<br>
+						<br>
+						<label for="lblScore">SCORE: </label>
+						<span id="lblScore"></span> <br><br><br>
+						<label for="lblTime">TIME: </label>
+						<span id="lblTime"></span> <br><br><br>
+						<label for="lbllives" style="font-size: 13px;">lives: </label><br><br>
+						<div style="padding-left: 20%;">
 						<img class ="life" id="life1" src = "heart.png" height="25" width="25">
 						<img class ="life" id="life2" src = "heart.png" height="25" width="25">
 						<img class ="life" id="life3" src = "heart.png" height="25" width="25">
 						<img class ="life" id="life4" src = "heart.png" height="25" width="25">
-						<img class ="life" id="life5" src = "heart.png" height="25" width="25"><br> 
+						<img class ="life" id="life5" src = "heart.png" height="25" width="25"><br>
+						</div>
+						<br><br><br>
+						<label>Control sound:</label><br><br>
+						<label class="switch">
+							<input id="accept" type="checkbox" oninput="controlSound(this)">
+							<span class="sliderSound round"></span>
+						  </label>
+						  <br>
+						  <a id='off' class=sound style='display: none;'><i class="fas fa-volume-off"></i></i></a>
+						  <a id= 'on' class=sound><i class="fas fa-volume-up"></i></a>
+						<br><br><br><br>
 						<button id="newGame" onclick="newGame()">
-							Start a new game
+							New game
 						</button>
+
 					</a>
 				</div>
+			
 
-				
+
 				<div class=main id="playForm" style=display:block; >
 					<canvas id="canvas" height="1200" width="1200"></canvas>
-				</div>			
+				</div>	
+
+				<div id=anotherfont1 class=menu>
+					
+					<a>
+						<h5>Your settings:</h5>
+						<label>Buttons</label><br>
+						<input class=button id=showup type=button><br>
+						<input class=button id=showleft  type=button>
+						<input class=button id=showright type=button><br>
+						<input class=button id=showdown type=button><br><br>
+						<label>Balls number: <span id="showballs"></span></label><br><br>
+						<label>Balls colors:</label><br>
+						<label>5 points: </label>
+						<input type="button" id="show5point"><br>
+						<label>15 points: </label>
+						<input type="button" id="show15point"><br>
+						<label>25 points: </label>
+						<input type="button" id="show25point"><br><br>
+						<label>Game duration: <span id="showtime"></span><span> seconds</span></label><br><br>
+						<label>Monsters amount: <span id="showmonsters"></span></label>
+						
+					</a>
 				
+				</div>
+						
+			</div>	
 		</div>
 	</body>
 	<footer>

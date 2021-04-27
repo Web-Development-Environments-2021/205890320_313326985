@@ -19,6 +19,7 @@ var showRight = 'ArrowRight';
 var showLeft = 'ArrowLeft';
 var loginUser;
 var context;
+var playSound;
 
 
 $(document).ready( function () {
@@ -180,6 +181,12 @@ $(document).ready( function () {
 		submitHandler: function() {
 			document.getElementById("gameMenu").style.display = 'block';
 			showGame();
+			playSound = document.getElementById("myAudio");
+			playSound.volume = 0.1;
+			playSound.currentTime = 0;
+			playSound.play();
+			document.getElementById('accept').checked = true;
+			showChosenSettings()
 			context = canvas.getContext("2d");
 			Start();
 			
@@ -328,13 +335,13 @@ function updateDuration(){
 }
 
 function updateColors(color){
-	if(color == '5point'){
-		fivePoints = document.getElementById("15point").value;
+	if(color == '5points'){
+		fivePoints = document.getElementById("5point").value;
 	}
-	else if(color == '15pount'){
-		fifteenPoints = document.getElementById("25point").value;
+	else if(color == '15points'){
+		fifteenPoints = document.getElementById("15point").value;
 	}
-	else if( color == '25point'){
+	else if( color == '25points'){
 		twentyfivePoints =  document.getElementById("25point").value;	
 	}
 
@@ -409,6 +416,8 @@ function randomSettings(){
 	//random monsters
 	document.getElementById("monsterquantity").value = Math.floor(Math.random() * (4) + 1);
 	monsterQuantity = parseInt(document.getElementById("monsterquantity").value);
+
+
 }
 
 function resetSettings(){
@@ -450,13 +459,18 @@ function resetSettings(){
 	//deafult monsters
 	document.getElementById("monsterquantity").value = 1;
 	monsterQuantity = parseInt(document.getElementById("monsterquantity").value);
-
-
 }
 
 
 
-function showWelcome() { 
+function showWelcome() {
+	if(gameStarted){
+		// if game already started
+		finishIntervals();
+		var checkboxsound = document.getElementById('accept');
+		checkboxsound.checked = false;
+		controlSound(checkboxsound);
+	} 
     document.getElementById("Game").style.display="none"; 
     document.getElementById("Login").style.display="none"; 
 	document.getElementById("Register").style.display="none"; 
@@ -466,6 +480,13 @@ function showWelcome() {
 }
 
 function showLogin(){
+	if(gameStarted){
+		// if game already started
+		finishIntervals();
+		var checkboxsound = document.getElementById('accept');
+		checkboxsound.checked = false;
+		controlSound(checkboxsound);
+	}
 	document.getElementById("Game").style.display="none"; 
 	document.getElementById("Login").style.display="block"; 
 	document.getElementById("Register").style.display="none"; 
@@ -475,6 +496,13 @@ function showLogin(){
 }
 
 function showRegister(){
+	if(gameStarted){
+		// if game already started
+		finishIntervals();
+		var checkboxsound = document.getElementById('accept');
+		checkboxsound.checked = false;
+		controlSound(checkboxsound);
+	}
 	document.getElementById("Game").style.display="none"; 
 	document.getElementById("Login").style.display="none"; 
 	document.getElementById("Register").style.display="block"; 
@@ -484,8 +512,14 @@ function showRegister(){
 }
 
 function showGame(){
+	if(gameStarted){
+		// if game already started
+		newGame();
+	}
+	else{
+		initIntervals();
+	}
 	document.getElementById("Game").style.display="block"; 
-	initIntervals();
 	document.getElementById("Login").style.display="none"; 
 	document.getElementById("Register").style.display="none"; 
 	document.getElementById("Settings").style.display="none"; 
@@ -494,6 +528,10 @@ function showGame(){
 }
 
 function showAbout(){
+	if(gameStarted){
+		// if game already started
+		finishIntervals();
+	}
 	document.getElementById("Game").style.display="none"; 
 	document.getElementById("Login").style.display="none"; 
 	document.getElementById("Register").style.display="none"; 
@@ -503,6 +541,13 @@ function showAbout(){
 }
 
 function showSettings(){
+	if(gameStarted){
+		// if game already started
+		finishIntervals();
+		var checkboxsound = document.getElementById('accept');
+		checkboxsound.checked = false;
+		controlSound(checkboxsound);
+	}
 	document.getElementById("Game").style.display="none"; 
 	document.getElementById("Login").style.display="none"; 
 	document.getElementById("Register").style.display="none"; 
@@ -512,6 +557,9 @@ function showSettings(){
 }
 
 function logOut(){
+	var checkboxsound = document.getElementById('accept');
+	checkboxsound.checked = false;
+	controlSound(checkboxsound);
 	loginUser;
 	document.getElementById("showuser").innerHTML = 'guest';
 	document.getElementById("logout").style.display = 'none';
@@ -598,6 +646,8 @@ var timeOfGame;
 var food_remain;
 var amountOfFood;
 var flagContinueToResetPacman = false;
+// helps to determine if to finish old intervals
+var gameStarted = false;
 var color_5Pts;
 var color_15Pts;
 var color_25Pts;
@@ -617,18 +667,6 @@ var ghostsSlowDown = false;
 
 
 boardlength = 20;
-// timeOfGame = gameDuration;
-// // timeOfGame = 60;
-// ghostAmount = monsterQuantity;
-// // ghostAmount = 4;
-// amountOfFood =  foodAmount;
-// amountOfFood = 50;
-// color_5Pts = fivePoints;
-// color_15Pts = fifteenPoints;
-// color_25Pts = twentyfivePoints;
-//color_5Pts = "#ccffeb";
-//color_15Pts = "#ccccff";
-//color_25Pts = "#ffc299";
 
 function Start() {
 
@@ -644,7 +682,7 @@ function Start() {
 	board[i][j] : 1 -> 5 points
 	board[i][j] : 0 -> empty cell
 	*/
-
+	gameStarted = true;
 	board = new Array();
 	ghostBoard = new Array();
 	specialPointBoard = new Array();
@@ -668,7 +706,7 @@ function Start() {
 	// Amount of different balls of points
 	var amount5Pts = 0.6 * food_remain;
 	var amount25Pts = 0.1 * food_remain;
-	pac_color = "yellow";
+	pac_color = "#f8be00";
 	var cnt = boardlength*boardlength;
 	var pacman_remain = 1;
 	start_time = new Date();
@@ -718,7 +756,6 @@ function Start() {
 		board[i] = new Array();
 		ghostBoard[i] = new Array();
 		specialPointBoard[i] = new Array();
-		//put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
 		for (var j = 0; j < boardlength; j++) {
 			// ghosts
 			if(i==0 && j==0 && flag_0_0){
@@ -727,6 +764,10 @@ function Start() {
 				ghosts[0].j = 0;
 				ghosts[0].img = new Image();
 				ghosts[0].img.src = "./images/blue_ghost.png";
+				// ghost last two directions in array,
+				// when we check if it stucks
+				// according to the the equality of array's values. 
+				ghosts[0].lastDistances = new Array();
 				ghostBoard[i][j] = 6;
 			}
 			if(i==0 && j==boardlength-1 && flag_0_9){
@@ -735,6 +776,10 @@ function Start() {
 				ghosts[1].j = boardlength-1;
 				ghosts[1].img = new Image();
 				ghosts[1].img.src = "./images/red_ghost.png";
+				// ghost last two directions in array,
+				// when we check if it stucks
+				// according to the the equality of array's values. 
+				ghosts[1].lastDistances = new Array();
 				ghostBoard[i][j] = 6;
 
 			}
@@ -744,6 +789,10 @@ function Start() {
 				ghosts[2].j = 0;
 				ghosts[2].img = new Image();
 				ghosts[2].img.src = "./images/black_ghost.png";
+				// ghost last two directions in array,
+				// when we check if it stucks
+				// according to the the equality of array's values. 
+				ghosts[2].lastDistances = new Array();
 				ghostBoard[i][j] = 6;
 
 			}
@@ -753,60 +802,108 @@ function Start() {
 				ghosts[3].j = boardlength-1;
 				ghosts[3].img = new Image();
 				ghosts[3].img.src = "./images/orange_ghost.png";
+				// ghost last two directions in array,
+				// when we check if it stucks
+				// according to the the equality of array's values. 
+				ghosts[3].lastDistances = new Array();
 				ghostBoard[i][j] = 6;
 			}
 			if (
 				//wall 1
-				(i == 3 && j == 3) ||
-				(i == 3 && j == 4) ||
-				(i == 3 && j == 5) ||
+				(i ==4  && j == 1) ||
+				(i ==5  && j == 1) ||
+				(i ==6  && j == 1) ||
 				//wall 2
-				(i == 6 && j == 1) ||
-				(i == 6 && j == 2) ||
-				(i == 6 && j == 3) ||
-				(i == 6 && j == 4) ||
-				(i == 6 && j == 5) ||
+				(i ==13  && j == 1) ||
+				(i ==14 && j == 1) ||
+				(i ==15 && j == 1) ||
 				//wall 3
-				(i == 3 && j == 7) ||
-				(i == 4 && j == 7) ||
-				(i == 5 && j == 7) ||
-				(i == 6 && j == 7) ||
-				(i == 7 && j == 7) ||
+				(i ==2  && j == 3) ||
+				(i ==2 && j == 4) ||
+				(i ==2  && j == 5) ||
+				(i ==2 && j == 6) ||
+				(i ==3 && j == 6) ||
+				(i ==4 && j == 6) ||
 				//wall 4
-				(i == 9 && j == 3) ||
-				(i == 9 && j == 4) ||
-				(i == 9 && j == 5) ||
-				(i == 9 && j == 6) ||
+				(i ==17  && j == 3) ||
+				(i ==17 && j == 4) ||
+				(i ==17  && j == 5) ||
+				(i ==17 && j == 6) ||
+				(i ==16 && j == 6) ||
+				(i ==15 && j == 6) ||
 				//wall 5
-				(i == 7 && j == 12) ||
-				(i == 8 && j == 12) ||
-				(i == 9 && j == 12) ||
-				(i == 10 && j == 12) ||
+				(i ==2  && j == 15) ||
+				(i ==2 && j == 14) ||
+				(i ==2  && j == 13)||
+				(i ==2 && j == 12) ||
+				(i ==3 && j == 12) ||
+				(i ==4 && j == 12) ||
 				//wall 6
-				(i == 4 && j == 12) ||
-				(i == 4 && j == 13) ||
-				(i == 4 && j == 14) ||
-				(i == 4 && j == 15) ||
+				(i ==17 && j == 15) ||
+				(i ==17 && j == 14) ||
+				(i ==17 && j == 13) ||
+				(i ==17 && j == 12) ||
+				(i ==16 && j == 12) ||
+				(i ==15 && j == 12) ||
 				//wall 7
-				(i == 11 && j == 13) ||
-				(i == 11 && j == 14) ||
-				(i == 11 && j == 15) ||
-				(i == 11 && j == 16) ||
+				(i ==13 && j == 18) ||
+				(i ==14 && j == 18) ||
+				(i ==15 && j == 18) ||
 				//wall 8
-				(i == 17 && j == 3) ||
-				(i == 17 && j == 4) ||
-				(i == 17 && j == 5) ||
-				(i == 17 && j == 6) ||
-				//wall 9
-				(i == 7 && j == 1) ||
-				(i == 8 && j == 1) ||
-				(i == 9 && j == 1) ||
-				(i == 10 && j == 1) ||
-				//wall 10
-				(i == 15 && j == 15) ||
-				(i == 15 && j == 16) ||
-				(i == 15 && j == 17) ||
-				(i == 15 && j == 18) 
+				(i ==4  && j == 18) ||
+				(i ==5 && j == 18) ||
+				(i ==6 && j == 18) ||
+				//wall 9 (x)
+				(i ==6 && j == 16) ||
+				(i ==6 && j == 15) ||
+				(i ==5 && j == 15) || 
+				(i ==7 && j == 15) ||
+				(i ==6 && j == 14) ||
+				//wall 10 (x)
+				(i ==13 && j == 16) ||
+				(i ==13 && j == 15) ||
+				(i ==12 && j == 15) || 
+				(i ==14 && j == 15) ||
+				(i ==13 && j == 14) ||
+				//wall 11 (x)
+				(i ==13 && j == 5) ||
+				(i ==13 && j == 4) ||
+				(i ==12 && j == 4) ||
+				(i ==14 && j == 4) ||
+				(i ==13 && j == 3) ||
+				//wall 12 (x)
+				(i ==6 && j == 5) ||
+				(i ==6 && j == 4) ||
+				(i ==5 && j == 4) ||
+				(i ==7 && j == 4) ||
+				(i ==6 && j == 3) ||
+				//wall 13 (long one)
+				(i ==0 && j == 8) ||
+				(i ==2 && j == 8) ||
+				(i ==5 && j == 8) ||
+				(i ==7 && j == 8) ||
+				(i ==9 && j == 8) ||
+				(i ==10 && j == 8) ||
+				(i ==12 && j == 8) ||
+				(i ==14 && j == 8) ||
+				(i ==15 && j == 8) ||
+				(i ==17 && j == 8) ||
+				(i ==19 && j == 8) ||
+				//wall 15 (long one)
+				(i ==1 && j == 10) ||
+				(i ==3 && j == 10) ||
+				(i ==4 && j == 10) ||
+				(i ==5 && j == 10) ||
+				(i ==6 && j == 10) ||
+				(i ==8 && j == 10) ||
+				(i ==9 && j == 10) ||
+				(i ==11 && j == 10) ||
+				(i ==12 && j == 10) ||
+				(i ==14 && j == 10) ||
+				(i ==15 && j == 10) ||
+				(i ==17 && j == 10) ||
+				(i ==19 && j == 10) 
+
 			) {
 				// obstacles
 				board[i][j] = 5;
@@ -913,11 +1010,15 @@ function Start() {
 }
 
 function initIntervals(){
-	interval = setInterval(UpdatePosition, 180);
-	interval_specialPoint = setInterval(UpdateSpecialPoint, 300);
-	interval_ghosts = setInterval(UpdateGhosts, 550);
+	interval = setInterval(UpdatePosition, 150);
+	interval_specialPoint = setInterval(UpdateSpecialPoint, 200);
+	interval_ghosts = setInterval(UpdateGhosts, 200);
 }
-
+function finishIntervals(){
+	clearInterval(interval);
+	clearInterval(interval_specialPoint);
+	clearInterval(interval_ghosts);
+}
 function findRandomEmptyCell(board) {
 	var i = Math.floor(Math.random() * (boardlength-1) + 1);
 	var j = Math.floor(Math.random() * (boardlength-1) + 1);
@@ -927,7 +1028,6 @@ function findRandomEmptyCell(board) {
 	}
 	return [i, j];
 }
-
 function GetKeyPressed() {
 	// up
 	if (keysDown[upButton]) {
@@ -949,8 +1049,8 @@ function GetKeyPressed() {
 
 function Draw() {
 	canvas.width = canvas.width; //clean board
-	lblScore.value = score;
-	lblTime.value = time_elapsed;
+	lblScore.innerHTML = score;
+	lblTime.innerHTML = time_elapsed;
 	var counterForGhostToDraw = 0
 	for (var i = 0; i < boardlength; i++) {
 		for (var j = 0; j < boardlength; j++) {
@@ -989,7 +1089,7 @@ function Draw() {
 			} 
 			else if (board[i][j] == 8) {
 				// draw image of chillPill
-				context.drawImage(chillPill.img, i*heightOfIndex, j*widthOfIndex, 60, 60 * chillPill.img.height / chillPill.img.width)
+				context.drawImage(chillPill.img, i*heightOfIndex, j*widthOfIndex, 55, 55 * chillPill.img.height / chillPill.img.width)
 			}
 			else if (board[i][j] == 9) {
 				// draw image of slowPill
@@ -1010,7 +1110,7 @@ function Draw() {
 			// ghosts
 			if (ghostBoard[i][j] == 6) {
 				// draw image of ghost
-				context.drawImage(ghosts[counterForGhostToDraw].img, i*heightOfIndex, j*widthOfIndex, 50, 50 * ghosts[counterForGhostToDraw].img.height / ghosts[counterForGhostToDraw].img.width)
+				context.drawImage(ghosts[counterForGhostToDraw].img, i*heightOfIndex, j*widthOfIndex, 65, 65 * ghosts[counterForGhostToDraw].img.height / ghosts[counterForGhostToDraw].img.width)
 				counterForGhostToDraw++;
 			}
 		}
@@ -1026,23 +1126,62 @@ function UpdateGhosts() {
 		var ghost_column = ghosts[k].j;
 		var pac_row = shape.i;
 		var pac_column = shape.j;
+
 		// define different directions for each ghost
 		var up = new Object();
 		var down = new Object();
 		var left = new Object();
 		var right = new Object();
 		var dirs = new Array();
+		var directionForbidden = new Array();
+		var arrayIfStuck = new Array();
+		var dirIfStuck = new Object();
+		// can recognize a pattern by indexes
+		if(ghosts[k].lastDistances.length == 3){
+			if(ghosts[k].lastDistances[0].i ==
+			   ghosts[k].lastDistances[2].i &&
+			   ghosts[k].lastDistances[0].j ==
+			   ghosts[k].lastDistances[2].j
+			)
+			directionForbidden = ghosts[k].lastDistances;
+		}
+		var whichDirection = new Array();
 		// up
 		if (
 			ghost_column > 0 &&
 			board[ghost_row][ghost_column - 1] != 5 &&
 			ghostBoard[ghost_row][ghost_column - 1] != 6
 			){
-			up.i = ghost_row;
-			up.j = ghost_column - 1;
-			var ghostGoUpDist = Math.abs((ghost_column-1)-pac_column) + Math.abs((ghost_row)-pac_row);
-			up.dist = ghostGoUpDist;
-			dirs.push(up);
+				dirIfStuck.i = ghost_row;
+				dirIfStuck.j = ghost_column - 1;
+				arrayIfStuck.push(dirIfStuck);
+				var flag_of_problem_dir=false;
+				// if ghost is not stuck
+				for(var dir=0; dir<directionForbidden.length; dir++){
+					if(
+						directionForbidden[dir].i == ghost_row &&
+						directionForbidden[dir].j == ghost_column - 1
+					)
+					{
+						// up is a problem because of stuck issue
+						flag_of_problem_dir = true;
+					}
+				}
+				if(!flag_of_problem_dir)
+				{
+					up.i = ghost_row;
+					up.j = ghost_column - 1;
+					var ghostGoUpDist = Math.abs((ghost_column-1)-pac_column) + Math.abs((ghost_row)-pac_row);
+					up.dist = ghostGoUpDist;
+					dirs.push(up);
+					// if we need to update list
+					if(ghosts[k].lastDistances.length == 3){
+						// remove oldest
+						ghosts[k].lastDistances.shift();
+					}
+					whichDirection.push("up");
+				}
+			
 		}
 		// down
 		if (
@@ -1050,11 +1189,35 @@ function UpdateGhosts() {
 			board[ghost_row][ghost_column + 1] != 5 &&
 			ghostBoard[ghost_row][ghost_column + 1] != 6
 			){
-			down.i = ghost_row;
-			down.j = ghost_column + 1;
-			var ghostGoDownDist = Math.abs((ghost_column+1)-pac_column) + Math.abs((ghost_row)-pac_row);
-			down.dist = ghostGoDownDist;
-			dirs.push(down);
+				dirIfStuck.i = ghost_row;
+				dirIfStuck.j = ghost_column + 1;
+				arrayIfStuck.push(dirIfStuck);
+				var flag_of_problem_dir=false;
+				// if ghost is not stuck
+			for(var dir=0; dir<directionForbidden.length; dir++){
+				if(
+					directionForbidden[dir].i == ghost_row &&
+					directionForbidden[dir].j == ghost_column + 1
+				)
+				{
+					// up is a problem because of stuck issue
+					flag_of_problem_dir = true;
+				}
+			}
+			if(!flag_of_problem_dir)
+			{
+				down.i = ghost_row;
+				down.j = ghost_column + 1;
+				var ghostGoDownDist = Math.abs((ghost_column+1)-pac_column) + Math.abs((ghost_row)-pac_row);
+				down.dist = ghostGoDownDist;
+				dirs.push(down);
+				// if we need to update list
+				if(ghosts[k].lastDistances.length == 3){
+					// remove oldest
+					ghosts[k].lastDistances.shift();
+				}
+				whichDirection.push("down");
+			}	
 		}
 		// left
 		if (
@@ -1062,11 +1225,36 @@ function UpdateGhosts() {
 			board[ghost_row - 1][ghost_column] != 5 &&
 			ghostBoard[ghost_row -1][ghost_column] != 6
 			) {
-			left.i = ghost_row - 1;
-			left.j = ghost_column;
-			var ghostGoLeftDist = Math.abs((ghost_column)-pac_column) + Math.abs((ghost_row-1)-pac_row);
-			left.dist = ghostGoLeftDist;
-			dirs.push(left);
+				dirIfStuck.i = ghost_row - 1;
+				dirIfStuck.j = ghost_column;
+				arrayIfStuck.push(dirIfStuck);
+				var flag_of_problem_dir=false;
+				// if ghost is not stuck
+			for(var dir=0; dir<directionForbidden.length; dir++){
+				if(
+					directionForbidden[dir].i == ghost_row - 1 &&
+					directionForbidden[dir].j == ghost_column 
+				)
+				{
+					// up is a problem because of stuck issue
+					flag_of_problem_dir = true;
+				}
+			}
+			if(!flag_of_problem_dir)
+			{
+				left.i = ghost_row - 1;
+				left.j = ghost_column;
+				var ghostGoLeftDist = Math.abs((ghost_column)-pac_column) + Math.abs((ghost_row-1)-pac_row);
+				left.dist = ghostGoLeftDist;
+				dirs.push(left);
+				// if we need to update list
+				if(ghosts[k].lastDistances.length == 3){
+					// remove oldest
+					ghosts[k].lastDistances.shift();
+				}
+				whichDirection.push("left");
+			}
+			
 		}
 		// right
 		if (
@@ -1074,29 +1262,67 @@ function UpdateGhosts() {
 			board[ghost_row + 1][ghost_column] != 5 &&
 			ghostBoard[ghost_row + 1][ghost_column] != 6
 			) {
-			right.i = ghost_row + 1;
-			right.j = ghost_column;
-			var ghostGoRightDist = Math.abs((ghost_column)-pac_column) + Math.abs((ghost_row+1)-pac_row);
-			right.dist = ghostGoRightDist;
-			dirs.push(right);
+				dirIfStuck.i = ghost_row + 1;
+				dirIfStuck.j = ghost_column;
+				arrayIfStuck.push(dirIfStuck);
+				var flag_of_problem_dir=false;
+				// if ghost is not stuck
+			for(var dir=0; dir<directionForbidden.length; dir++){
+				if(
+					directionForbidden[dir].i == ghost_row + 1 &&
+					directionForbidden[dir].j == ghost_column 
+				)
+				{
+					// up is a problem because of stuck issue
+					flag_of_problem_dir = true;
+				}
+			}
+			if(!flag_of_problem_dir)
+			{
+				right.i = ghost_row + 1;
+				right.j = ghost_column;
+				var ghostGoRightDist = Math.abs((ghost_column)-pac_column) + Math.abs((ghost_row+1)-pac_row);
+				right.dist = ghostGoRightDist;
+				dirs.push(right);
+				// if we need to update list
+				if(ghosts[k].lastDistances.length == 3){
+					// remove oldest
+					ghosts[k].lastDistances.shift();
+				}
+				whichDirection.push("right");
+			}
+			
 		}
-		
-		// loop to find a way with minimum distance from ghost k, to pacman
-		var min = dirs[0].dist;
-    	var minIndex = 0;
-    	for (var t = 1; t < dirs.length; t++) {
-        	if (dirs[t].dist < min) {
-        	    minIndex = t;
-        	    min = dirs[t].dist;
-        	}
-    	}
-		// draw in another place
-		ghostBoard[ghosts[k].i][ghosts[k].j] = 0;
-		// update specific ghost on the change of place
-		ghosts[k].i = dirs[minIndex].i;
-		ghosts[k].j = dirs[minIndex].j;
-		// draw in here
-		ghostBoard[ghosts[k].i][ghosts[k].j] = 6;
+		if(dirs.length!=0){
+			var min = dirs[0].dist;
+			var minIndex = 0;
+			// loop to find a way with minimum distance from ghost k, to pacman
+			for (var t = 1; t < dirs.length; t++) {
+				if (dirs[t].dist < min) {
+					minIndex = t;
+					min = dirs[t].dist;
+				}
+			}
+			ghosts[k].lastDistances.push(dirs[minIndex]);
+			// draw in another place
+			ghostBoard[ghosts[k].i][ghosts[k].j] = 0;
+			// update specific ghost on the change of place
+			ghosts[k].i = dirs[minIndex].i;
+			ghosts[k].j = dirs[minIndex].j;
+			// draw in here
+			ghostBoard[ghosts[k].i][ghosts[k].j] = 6;
+		}
+		else{
+			// if stuck with no solution
+			// draw in another place
+			ghostBoard[ghosts[k].i][ghosts[k].j] = 0;
+			// update specific ghost on the change of place
+			var randomIndex = Math.floor(Math.random() * (arrayIfStuck.length))
+			ghosts[k].i = arrayIfStuck[randomIndex].i;
+			ghosts[k].j = arrayIfStuck[randomIndex].j;
+			// draw in here
+			ghostBoard[ghosts[k].i][ghosts[k].j] = 6;
+		}
 
 		// At the end of ghost move, check if it ate pacman
 		// only check if it ate pacman, if there is no use in chillPill
@@ -1128,7 +1354,7 @@ function UpdateSpecialPoint(){
 		randDirArr.push(down);
 	}
 	// left
-	if (special_row > (boardlength-1) && board[special_row - 1][special_column] != 5) {
+	if (special_row > 0 && board[special_row - 1][special_column] != 5) {
 		left.i = special_row - 1;
 		left.j = special_column;
 		randDirArr.push(left);
@@ -1246,9 +1472,10 @@ function UpdatePosition() {
 	var currentTime = new Date();
 	time_elapsed = (currentTime - start_time) / 1000;
 	// turn pacman into green if it is very good
-	if (score >= 20 && time_elapsed <= 10) {
-		pac_color = "green";
-	}
+	// if (score >= 20 && time_elapsed <= 10) {
+	// 	pac_color = "green";
+	// }
+
 	// end game because of time limit
 	// or end of balls of points
 	if (
@@ -1264,13 +1491,22 @@ function UpdatePosition() {
 		window.clearInterval(interval);
 		window.clearInterval(interval_ghosts);
 		window.clearInterval(interval_specialPoint);
+		// stops sound when finish game
+		var checkboxsound = document.getElementById('accept');
+		checkboxsound.checked = false;
+		controlSound(checkboxsound);
 	}
-	// after pacman moved, check if he run into ghosts
-	// only check if ghost ate pacman, if there is no use in chillPill
-	if(ghostsCanAttack){
-		checkIfPacmanJustBeenAte();
-	}	
-	Draw();
+	else{
+		// after pacman moved, check if he run into ghosts
+		// only check if ghost ate pacman, if there is no use in chillPill
+		if(ghostsCanAttack){
+			checkIfPacmanJustBeenAte();
+		}	
+		Draw();
+	}
+	
+	
+	
 }
 
 function checkIfPacmanJustBeenAte(){
@@ -1318,6 +1554,9 @@ function checkIfPacmanJustBeenAte(){
 			window.clearInterval(interval_ghosts);
 			window.clearInterval(interval_specialPoint);
 			window.alert("Loser!");
+			var checkboxsound = document.getElementById('accept');
+			checkboxsound.checked = false;
+			controlSound(checkboxsound);
 		}
 		// not allowing negative amount of points
 		if (score < 0){
@@ -1332,13 +1571,12 @@ function newGame(){
 	window.clearInterval(interval_ghosts);
 	window.clearInterval(interval_specialPoint);
 	Start();
-	for(var i=1; i<6; i++){
-		var stringOfLifeCalculated = "life"+i;
-		document.getElementById(stringOfLifeCalculated).style.display="block"; 
-	}
+	fillHearts();
 	initIntervals();
-	
-	
+	playSound.currentTime = 0;
+	playSound.play();
+	document.getElementById('accept').checked = true;
+
 }
 
 var imgOfGhosts = new Array();
@@ -1355,7 +1593,7 @@ function activateChillPill(){
 		}
 		setTimeout(function(){
 			activateChillPill();
-		  }, 10000);
+		  }, 8000);
 	}
 	// if it turn off now - stop chillPill
 	else{
@@ -1383,9 +1621,55 @@ function activateSlowPill(){
 	else{
 		ghostsSlowDown = false;
 		clearInterval(interval_ghosts);
-		interval_ghosts = setInterval(UpdateGhosts, 550);
+		interval_ghosts = setInterval(UpdateGhosts, 300);
 	}
 }
 
-
+function fillHearts(){
+	for(var i=1; i<6; i++){
+		var stringOfLifeCalculated = "life"+i;
+		document.getElementById(stringOfLifeCalculated).style.display="block"; 
+	}
+}
 ////GAME/////
+
+function showChosenSettings(){
+		//chosen key
+		document.getElementById("showup").value = showUp;
+		document.getElementById("showdown").value = showDown;
+		document.getElementById("showright").value = showRight;
+		document.getElementById("showleft").value = showLeft;
+	
+		//chosen food amount
+		document.getElementById("showballs").innerHTML = foodAmount;
+	
+		//chosen colors
+		document.getElementById("show5point").style.backgroundColor = fivePoints;
+		document.getElementById("show15point").style.backgroundColor = fifteenPoints;
+		document.getElementById("show25point").style.backgroundColor = twentyfivePoints;
+	
+		//chosen duration
+		document.getElementById("showtime").innerHTML = gameDuration;
+	
+		//chosen monsters
+		document.getElementById("showmonsters").innerHTML = monsterQuantity;
+
+}
+
+function controlSound(checkbox){
+	if (checkbox.checked){
+		playSound.play();
+		document.getElementById('on').style.display = 'block'
+		document.getElementById('off').style.display = 'none'
+	}
+	else{
+		playSound.pause();
+		document.getElementById('on').style.display = 'none'
+		document.getElementById('off').style.display = 'block'
+	}
+
+}
+
+
+
+

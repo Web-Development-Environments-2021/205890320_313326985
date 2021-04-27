@@ -15,12 +15,12 @@ header
 	font-family: 'Noto Sans JP', sans-serif;
 	height: 20px;
 	width: 100%;
-	top: 30px;
+	top: 33px;
 	position: fixed;
 	color: rgb(255, 255, 255);
 	margin: 0;
 	padding: 0;
-	font-size: small;
+	font-size: 12px;
 	text-align: left;
 	position: fixed;
 }
@@ -29,7 +29,7 @@ header
 #Menu
 {
 	width: 100%;
-	height: 40px;
+	height: 48px;
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
@@ -101,9 +101,9 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
   }
 
 
-#s1, #s2{
+#s1, #s2, #newGame, #register_submit, #reset_submit, #login_submit, #reset_login{
 	padding: 10px 20px;
-	font-size: 12px;
+	font-size: 14px;
 	text-align: center;
 	cursor: pointer;
 	outline: none;
@@ -116,7 +116,7 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	border: 5px solid rgb(255, 255, 255);
 }
 
-#toRegister, #toLogin, #register_submit, #reset_submit, #login_submit, #reset_login, #s3 {
+#toRegister,#toLogin, #s3 {
 	padding: 15px 25px;
 	font-size: 24px;
 	text-align: center;
@@ -131,9 +131,9 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	border: 5px solid rgb(255, 255, 255);
   }
   
-  #toRegister:hover ,#toLogin:hover, #register_submit:hover, #reset_submit:hover, #login_submit:hover, #reset_login:hover, #s1:hover, #s2:hover, #s3:hover {background-color: #ffaaaf;}
+  #toRegister:hover ,#toLogin:hover, #register_submit:hover, #reset_submit:hover, #login_submit:hover, #reset_login:hover, #s1:hover, #s2:hover, #s3:hover, #newGame:hover {background-color: #ffaaaf;}
   
-  #toRegister:active ,#toLogin:active, #register_submit:active, #reset_submit:active, #login_submit:active, #reset_login:active , #s1:active, #s2:active, #s3:active{
+  #toRegister:active ,#toLogin:active, #register_submit:active, #reset_submit:active, #login_submit:active, #reset_login:active , #s1:active, #s2:active, #s3:active, #newGame:active{
 	box-shadow: 0 5px #666;
 	transform: translateY(4px);
 	background-color: #ffaaaf;
@@ -152,9 +152,10 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
   h5{
 	text-align: center;
 	font-family: 'Press Start 2P', cursive;
-	font-size: 15px; 
+	font-size: 12px; 
 	padding: 0;
   }
+
 
   
 
@@ -167,11 +168,11 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	margin: auto;
 	text-align: center;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 14px;
 	font-family: 'Noto Sans JP', sans-serif;
 	-webkit-animation: animatezoom 0.6s;
 	animation: animatezoom 0.6s;
-	padding: 20px;
+	z-index: 1;
 
   }
 
@@ -209,8 +210,21 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	}
   }
 
-#username, #fullname, #dateofbirth, #email, #password, #confirm_password, #loginuser, #loginpassword, #up, #down, #right, #left, #monsterquantity{
-	width: 100%;
+#username, #fullname, #dateofbirth, #email, #password, #confirm_password, #loginuser, #loginpassword{
+	width: 95%;
+	margin: 1px 0;
+	box-sizing: border-box;
+	border-color: silver;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 14px;
+	text-align: center;
+	height: 25px;
+	font-size: 14px;
+
+}
+#monsterquantity{
+	width: 30%;
 	padding: 5px 5px;
 	margin: 2px 0;
 	box-sizing: border-box;
@@ -219,11 +233,12 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 	border-width: 1px;
 	border-radius: 15px;
 	text-align: center;
-	height: 40px;
-	font-size: 20px;
-
+	background-color: rgba(255, 255, 255, 0.623);
+	height: 25px;
+	font-size: 14px;
 }
-#username:hover, #fullname:hover, #dateofbirth:hover, #email:hover, #password:hover, #confirm_password:hover, #loginuser:hover, #loginpassword:hover, #up:hover, #down:hover, #right:hover, #left:hover, input[type=color]:hover, #monsterquantity:hover
+
+#username:hover, #fullname:hover, #dateofbirth:hover, #email:hover, #password:hover, #confirm_password:hover, #loginuser:hover, #loginpassword:hover, input[type=color]:hover, #monsterquantity:hover
 {
 	border-color: rgba(0, 0, 0);
 	background-color: rgba(255, 255, 255, 0.678);
@@ -231,7 +246,7 @@ li a:active{	box-shadow: 0 5px rgb(184, 184, 184);	transform: translateY(4px);
 
 
 input[type=color]{
-	width: 20%;
+	width: 10%;
 	border-color: silver;
 	border-style: solid;
 	border-width: 1px;
@@ -298,9 +313,6 @@ label.error {
 }
 
 
-#canvas{
-	background-color: rgb(255, 255, 255);
-}
 
 
 #About {
@@ -382,7 +394,7 @@ footer{
 	z-index: -1;
 }
 
-#playForm{
+#playFrom{
 	width: 600px;
 	height: 600px;
 }
@@ -402,38 +414,175 @@ footer{
 	color: #ffef00;
 }
 
-.life{
-	float: left;
-}
 
 * {
 	box-sizing: border-box;
   }
+
+
   .menu {
-	width:17%;
-	height: 600;
+	width:25%;
+	height: 535px;
 	text-align:center;
-	background-color:#181818;
 	top:0;
+	bottom: 0;
+	float: left;
+	padding: 40px;
+	background-color:#181818;
+
 
   }
   
-  .menu input[type=text]{
-	width:50%;
-	text-align:center;
-  }
-  
   .menu a {
-	/* background-color:#e5e5e5; */
-	padding:8px;
-	display:block;
-	width:100%;
-	height: 100%;
 	color:rgb(255, 255, 255);
-	text-align:left;
-	font-family: 'Monoton', cursive;
-	font-family: 'Press Start 2P', cursive;
+	font-size: 14px;
+	text-align:center;
+	font-weight: bold;
+	background-color:#181818;
+	
+
   }
   .main {
 	text-align: center;
+	float: left;
+	width:50%;
+	background-color: black;
+	height: 535px;
+
   }
+
+  #canvas{
+	width:100%;
+	height: 535px;
+	padding: 40px;
+
+  }
+  #anotherfont1{
+	font-family: 'Noto Sans JP', sans-serif;
+  }
+
+  #anotherfont2{
+	font-family: 'Press Start 2P', cursive;
+  }
+
+  #show5point, #show15point, #show25point{
+	width: 40px;
+	border-color: silver;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 20px;
+	height: 15px;
+  }
+
+  #gamebackground{
+	background-color:#181818;
+	-webkit-animation: animatezoom 0.6s;
+	animation: animatezoom 0.6s;
+	width: 100%;
+	height: 100%;
+	
+}
+
+
+  .button{
+	color:rgb(255, 255, 255);
+	font-size:15px;
+	text-decoration:none;
+	background-color:#FFA12B;
+	padding:7px 5px;
+	margin: 5.2px;
+	
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	text-shadow: 0px 1px 0px rgb(0, 0, 0);
+	filter: dropshadow(color=rgb(0, 0, 0), offx=0px, offy=1px);
+	
+	-webkit-box-shadow:inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+	-moz-box-shadow:inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+	box-shadow:inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+	
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+  }
+
+ 
+  .button:hover{
+  	box-shadow: 0 5px #666;
+  	transform: translateY(4px);
+  	background-color: #F78900;
+	border: solid black;
+	border-width: 2px;
+  }
+
+  .life{
+	float: left;
+
+  }
+
+  /*sound*/
+
+  /* The switch - the box around the slider */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+	
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+  }
+  
+  /* The slider of sound */
+  .sliderSound {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: .4s;
+	transition: .4s;
+  }
+  
+  .sliderSound:before {
+	position: absolute;
+	content: "";
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	-webkit-transition: .4s;
+	transition: .4s;
+  }
+  
+  input:checked + .sliderSound {
+	background-color: #FFA12B;
+  }
+  
+  input:focus + .sliderSound {
+	box-shadow: 0 0 1px #FFA12B;
+  }
+  
+  input:checked + .sliderSound:before {
+	-webkit-transform: translateX(26px);
+	-ms-transform: translateX(26px);
+	transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .sliderSound.round {
+	border-radius: 34px;
+  }
+  
+  .sliderSound.round:before {
+	border-radius: 50%;
+  }
+
+
