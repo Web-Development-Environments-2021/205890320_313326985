@@ -7,11 +7,7 @@ In this ReadMe document, we will specify our 2 extensions to this assignment, as
 
 **Our GitHub IO:**
 
-•
-
-•
-
-<https://web-development-environments-2021.github.io/Assignment2_205890320_313326985>
+https://web-development-environments-2021.github.io/Assignment2_205890320_313326985
 
 **Who we are:**
 
@@ -19,7 +15,6 @@ In this ReadMe document, we will specify our 2 extensions to this assignment, as
 
 313326985 ,שצ'רנסקי שחר
 
-•
 
 **Functionality appended:**
 
@@ -27,7 +22,6 @@ We have chosen to add functionality in the shape of pills, that will help Pac-Ma
 
 as many points as it can!
 
-o
 
 **#1**
 
@@ -41,7 +35,6 @@ After this amount of time, ghosts will be painted back to the original color and
 
 able to attack Pac-Man again.
 
-o
 
 **#2**
 
