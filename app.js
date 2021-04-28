@@ -155,32 +155,13 @@ $(document).ready( function () {
 	//Settings validation
 	$( "#settingsForm" ).validate( {
 		rules: {
-			up: {
-				checkUpKey: true,
-			} ,
 			down: {
-				checkDownKey: true,
-			} ,
-			right: {
-				checkRightKey: true,
-			} ,
-			left: {
-				checkLeftKey: true,
+				checkKey: true,
 			} ,
 		},
 		messages: {
-			up: {
-				checkUpKey: "This button already taken by another action",
-			},
 			down: {
-				checkDownKey: "This button already taken by another action",
-			},
-			right: {
-				checkRightKey: "This button already taken by another action",
-			},
-			left: {
-				checkLeftKey: "This button already taken by another action",
-
+				checkKey: "You need to choose diffrent key for each button",
 			},
 
 		},
@@ -250,61 +231,13 @@ $(function() {
 	});
 
 	//check if the key actions not equal
-	$.validator.addMethod("checkUpKey", function(value, element) {
+	$.validator.addMethod("checkKey", function(value, element) {
 		let upCheck = document.getElementById("up").value;
 		let downCheck = document.getElementById("down").value;
 		let rightCheck = document.getElementById("right").value;
 		let leftCheck = document.getElementById("left").value;
 
-		if(upCheck == downCheck || upCheck == rightCheck || upCheck == leftCheck){
-			return false;
-		}
-
-		else{
-			return true;
-		}
-
-	});
-
-	$.validator.addMethod("checkDownKey", function(value, element) {
-		let upCheck = document.getElementById("up").value;
-		let downCheck = document.getElementById("down").value;
-		let rightCheck = document.getElementById("right").value;
-		let leftCheck = document.getElementById("left").value;
-
-		if(upCheck == downCheck || downCheck == rightCheck || downCheck == leftCheck){
-			return false;
-		}
-
-		else{
-			return true;
-		}
-
-	});
-
-	$.validator.addMethod("checkLeftKey", function(value, element) {
-		let upCheck = document.getElementById("up").value;
-		let downCheck = document.getElementById("down").value;
-		let rightCheck = document.getElementById("right").value;
-		let leftCheck = document.getElementById("left").value;
-
-		if(upCheck == leftCheck || leftCheck == rightCheck || downCheck == leftCheck){
-			return false;
-		}
-
-		else{
-			return true;
-		}
-
-	});
-
-	$.validator.addMethod("checkRightKey", function(value, element) {
-		let upCheck = document.getElementById("up").value;
-		let downCheck = document.getElementById("down").value;
-		let rightCheck = document.getElementById("right").value;
-		let leftCheck = document.getElementById("left").value;
-
-		if(upCheck == rightCheck || downCheck == rightCheck || rightCheck == leftCheck){
+		if(upCheck == downCheck || upCheck == rightCheck || upCheck == leftCheck || downCheck == rightCheck || downCheck == leftCheck || rightCheck == leftCheck){
 			return false;
 		}
 
@@ -479,6 +412,8 @@ function showWelcome() {
 	document.getElementById("Settings").style.display="none"; 
 	document.getElementById("About").style.display="none"; 
 	document.getElementById("Welcome").style.display="block";
+	document.getElementsByTagName("body")[0].style.backgroundImage = 'url(./images/wallpaper.jpg)';
+
 }
 
 function showLogin(){
@@ -495,6 +430,7 @@ function showLogin(){
 	document.getElementById("Settings").style.display="none"; 
 	document.getElementById("Welcome").style.display="none"; 
 	document.getElementById("About").style.display="none"; 
+	document.getElementsByTagName("body")[0].style.backgroundImage = 'url(./images/wallpaper.jpg)';
 }
 
 function showRegister(){
@@ -511,6 +447,7 @@ function showRegister(){
 	document.getElementById("Settings").style.display="none"; 
 	document.getElementById("Welcome").style.display="none";
 	document.getElementById("About").style.display="none";  
+	document.getElementsByTagName("body")[0].style.backgroundImage = 'url(./images/wallpaper.jpg)';
 }
 
 function showGame(){
@@ -527,6 +464,9 @@ function showGame(){
 	document.getElementById("Settings").style.display="none"; 
 	document.getElementById("Welcome").style.display="none"; 
 	document.getElementById("About").style.display="none"; 
+	document.getElementsByTagName("body")[0].style.backgroundImage = 'none';
+	document.getElementsByTagName("body")[0].style.backgroundColor = "#181818";
+
 }
 
 function showAbout(){
@@ -556,12 +496,11 @@ function showSettings(){
 	document.getElementById("Settings").style.display="block"; 
 	document.getElementById("Welcome").style.display="none"; 
 	document.getElementById("About").style.display="none"; 
+	document.getElementsByTagName("body")[0].style.backgroundImage = 'url(./images/wallpaper.jpg)';
 }
 
 function logOut(){
-	var checkboxsound = document.getElementById('accept');
-	checkboxsound.checked = false;
-	controlSound(checkboxsound);
+
 	loginUser;
 	document.getElementById("showuser").innerHTML = 'guest';
 	document.getElementById("logout").style.display = 'none';
@@ -581,6 +520,7 @@ function logOut(){
 	checkboxsound = document.getElementById('accept');
 	checkboxsound.checked = false;
 	controlSound();
+	document.getElementsByTagName("body")[0].style.backgroundImage = 'url(./images/wallpaper.jpg)';
 	//reset game
 }
 
@@ -1213,6 +1153,7 @@ function UpdateGhosts() {
 					{
 						// up is a problem because of stuck issue
 						flag_of_problem_dir = true;
+						break;
 					}
 				}
 				if(!flag_of_problem_dir)
@@ -1250,6 +1191,7 @@ function UpdateGhosts() {
 				{
 					// up is a problem because of stuck issue
 					flag_of_problem_dir = true;
+					break;
 				}
 			}
 			if(!flag_of_problem_dir)
@@ -1286,6 +1228,7 @@ function UpdateGhosts() {
 				{
 					// up is a problem because of stuck issue
 					flag_of_problem_dir = true;
+					break;
 				}
 			}
 			if(!flag_of_problem_dir)
@@ -1323,6 +1266,7 @@ function UpdateGhosts() {
 				{
 					// up is a problem because of stuck issue
 					flag_of_problem_dir = true;
+					break;
 				}
 			}
 			if(!flag_of_problem_dir)

@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<title>Liad and Shahar - Pacman</title>
-		<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
 		<link rel="stylesheet" type="text/css" href="style.css" />
 		<script src="./jquery-3.4.1.slim.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
@@ -20,12 +20,15 @@
 		
 	</head>
 
-	<header>
-		<p id="head">Pacman by Liad Nachshon and Shahar Scheranski</p>
-	</header>
 	<body>
+		<header>
+			<a><img src="./images/headerimg.jpg" height="15" width="100"></a><span> Pacman by Liad Nachshon and Shahar Scheranski</span>
+		</header>
+
+
+
 		<div id = "Menu">
-			<li><a><img src="favicon-32x32.png" height="23" width="23"></a></li>
+			<li><a><img src="./images/favicon-32x32.png" height="15" width="20"></a></li>
 			<li><a onclick="showWelcome()">Home</a></li>
 			<li><a id=signup onclick="showRegister()">Signup</a></li>
 			<li><a id=login onclick="showLogin()">Login</a></li>
@@ -41,7 +44,7 @@
 			<p class = "glow"><b>WELCOME TO PAC-MAN!</b></p>
 				<button id="toRegister" onclick="showRegister()">
 					Sign Up
-				</button>
+				</button><br>
 				<button id="toLogin" onclick="showLogin()">
 					Log In
 				</button>
@@ -111,7 +114,7 @@
 			<form class="cmxform" id="settingsForm"  >
 						<h5>Game buttons:</h5>
 						<p>
-							<span style="font-size: 14px;">click the key and choose button to change it</span><br>
+							<span style="font-size: 14px;">Press the key and choose button to change it</span><br>
 							<input class=button id=up name="up" type=button onkeydown="updateButton(event, 'up')"><br>
 							<input class=button id=left name="left" type=button onkeydown="updateButton(event, 'left')">
 							<input class=button id=right name="right" type=button onkeydown="updateButton(event, 'right')"><br>
@@ -151,26 +154,50 @@
 			</form>
 		</div>
 
-			<div id = "About" style="display:none">
-				<br>
+		<div id = "About" style="display:none">
 			<div id="aboutContent">
 			<span class="close">&times;</span>
 			<h5>About!</h5>
-			</br class= "forAbout">
-			 Liad Nahshon
-			</br class= "forAbout">
-			Shahar Shcheranski 
-			</br >
-			 jquery Plugin, took template from w3schools.
+			</br>
+				The creators are:
+				Liad Nachshon & Shahar Shcheranski 
+			</br>
+			While creating our version of PAC-MAN game, we had some struggles, such as:
+			<div>
+			<ol>
+				<li style= float:left>
+					Getting into an existing code, and an existing structure can do a hard time understanding what was the purpose of the developer.
+				</li>
+				<br>
+				<li style= float:left>
+					Developing for the first time in Javascript requiers a bit of mind switching. 
+				</li>
+				<br>
+				<li style= float:left>
+					For the first time, we have seen that for creating a game, one will need to deal with timing of intervals, User Experience, etc.
+				</li>
+				<br>
+				<li style= float:left>
+					In contrast to other projects we have developed, this one made us search a lot for our targets online.
+				</li>
+				<br>
+				<li style= float:left>We have used jQuery Validation Plugin for the validation of our forms; signUp, login and game's settings.
+				</li>
+				<br>
+				<li style= float:left>
+					Took template from w3schools.
+				</li>
+			</ol>
+		</div>
+			<br>
+			<span>We hope you enjoy our game !</span>
 			</div>
-			</div>
+		</div>
 
 		<div id = "Game" style="display:none" >
 				<div id=anotherfont2 class=menu>
-					<audio id="myAudio" src="sound.mp3" value="play"></audio>
+					<audio id="myAudio" src="./sounds/sound.mp3" value="play"></audio>
 					<a>
-						<br>
-						<br>
 						<br>
 						<label for="lblScore">SCORE: </label>
 						<span id="lblScore"></span> <br><br><br>
@@ -178,11 +205,11 @@
 						<span id="lblTime"></span> <br><br><br>
 						<label for="lbllives" style="font-size: 13px;">lives: </label><br><br>
 						<div style="padding-left: 30%;">
-						<img class ="life" id="life1" src = "heart.png" height="25" width="25">
-						<img class ="life" id="life2" src = "heart.png" height="25" width="25">
-						<img class ="life" id="life3" src = "heart.png" height="25" width="25">
-						<img class ="life" id="life4" src = "heart.png" height="25" width="25">
-						<img class ="life" id="life5" src = "heart.png" height="25" width="25"><br>
+						<img class ="life" id="life1" src = "./images/heart.png" height="25" width="25">
+						<img class ="life" id="life2" src = "./images/heart.png" height="25" width="25">
+						<img class ="life" id="life3" src = "./images/heart.png" height="25" width="25">
+						<img class ="life" id="life4" src = "./images/heart.png" height="25" width="25">
+						<img class ="life" id="life5" src = "./images/heart.png" height="25" width="25"><br>
 						</div>
 						<br><br><br>
 						<label>Control sound:</label><br><br>
@@ -192,23 +219,27 @@
 						  </label>
 						  <br>
 						  <a id='off' class=sound style='display: none;'><i class="fas fa-volume-off"></i></i></a>
-						  <a id= 'on' class=sound><i class="fas fa-volume-up"></i></a>
+						  <a id= 'on' class=sound><i class="fas fa-volume-up"></i></a><br>
+						  <label class=exp style="float: left;"><img src = "./images/chill_pill.jpg" height="25" width="25">  - Transparent monsters  </label><br><br>
+						  <label class=exp style="float: left;"><img src = "./images/slow_ghost.png" height="20" width="25">  - Slow monsters  </label>
 						<br><br><br><br>
 						<button id="newGame" onclick="newGame()">
 							New game
 						</button>
+						<br>
+						<br>
+						<br>
 
 					</a>
 				</div>
 			
 
 
-				<div class=main id="playForm" style=display:block; >
+				<div class=main style=display:block; >
 					<canvas id="canvas" height="1200" width="1200"></canvas>
 				</div>	
 
 				<div id=anotherfont1 class=menu>
-					
 					<a>
 						<h5>Your settings:</h5>
 						<label>Buttons</label><br>
@@ -228,7 +259,6 @@
 						<label>Monsters amount: <span id="showmonsters"></span></label>
 						
 					</a>
-				
 				</div>
 		</div>
 
@@ -236,7 +266,7 @@
 
 
 		<footer>
-			<a class=contact>Shahar shcheranski</a>
+			<a class=contact>Shahar Shcheranski</a>
 			<a class=contact href="https://www.facebook.com/shahar.shcheranski" ><i class="fa fa-facebook-official"></i></a>
 			<a class=contact href="https://www.instagram.com/shahar_shche/" ><i class="fa fa-instagram"></i></a>
 			<a class=contact href="https://www.linkedin.com/in/shahar-shcheranski-18a8431b5/" ><i class="fa fa-linkedin"></i></a>
