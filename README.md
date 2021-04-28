@@ -9,13 +9,6 @@ In this ReadMe document, we will specify our 2 extensions to this assignment, as
 
 https://web-development-environments-2021.github.io/Assignment2_205890320_313326985
 
-**Who we are:**
-
-205890320 ,נחשון ליעד
-
-313326985 ,שצ'רנסקי שחר
-
-
 **Functionality appended:**
 
 We have chosen to add functionality in the shape of pills, that will help Pac-Man survive and win
